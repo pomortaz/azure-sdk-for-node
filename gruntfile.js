@@ -15,86 +15,65 @@
 //
 
 module.exports = function(grunt) {
+  var glob = require('glob');
+  var _ = require('underscore');
+  var path = require('path');
+  var fs = require('fs');
+
+  var jsdocOptions = {
+    destination: 'docs',
+    template: "jsdocs/template",
+    configure: "jsdocs/template/jsdoc.conf.json",
+    tutorials: "examples"
+  };
+
+
+  var sources = _.map(glob.sync("lib/**/package.json", {}), function(pack) {
+    return _.map(["/**/*.js", '/package.json', "/README.md"], function(i) {
+      return path.dirname(pack) + i;
+    });
+  });
+
+  var jsdocConfig = {};
+  _.each(sources, function(source) {
+    jsdocConfig[JSON.parse(fs.readFileSync(source[1])).name] = {
+      src: source,
+      options: jsdocOptions
+    };
+  });
+
+  jsdocConfig['Azure'] = {
+    src: ["lib/**/*.js", "README.md"],
+    options: jsdocOptions
+  };
+
+  var packageVersions = {};
+  _.each(sources, function(source) {
+    var pack = JSON.parse(fs.readFileSync(source[1]));
+    packageVersions[pack.name] = pack.version;
+  });
+
   //init stuff
   grunt.initConfig({
-    packageVersions: {
-      'azure': '0.10.4',
-      'azure-common': '0.9.10',
-      'azure-mgmt-authorization': '0.9.0-pre.5',
-      'azure-mgmt-compute': '0.9.15',
-      'azure-gallery': '2.0.0-pre.14',
-      'azure-mgmt-hdinsight': '0.9.13',
-      'azure-mgmt': '0.9.15',
-      'azure-monitoring': '0.9.1-pre.15',
-      'azure-mgmt-vnet': '0.9.16',
-      'azure-mgmt-resource': '2.0.0-pre.15',
-      'azure-scheduler': '0.9.1-pre.15',
-      'azure-mgmt-scheduler': '0.9.1-pre.15',
-      'azure-sb': '0.9.15',
-      'azure-mgmt-sb': '0.9.15',
-      'azure-mgmt-sql': '0.9.16',
-      'azure-mgmt-storage': '0.9.15',
-      'azure-mgmt-store': '0.9.15',
-      'azure-mgmt-subscription': '0.9.15',
-      'azure-mgmt-website': '0.9.15',
-      'azure-rm-website': '0.9.0-pre.9',
-      'azure-storage-legacy': '0.9.13',
-      'azure-extra': '0.1.6'
-    },
-    //jsdoc config
-    jsdoc : {
-        dist : {
-            src: [
-                  "README.md",
-                  "lib/azure.js",
-                  "lib/serviceruntime/roleenvironment.js",
-                  "lib/services/blob/blobservice.js",
-                  "lib/services/computeManagement/lib/computeManagementClient.js",
-                  "lib/services/hdinsight/hdinsightservice.js",
-                  "lib/services/management/lib/managementClient.js",
-                  "lib/services/monitoring/lib/autoscaleClient.js",
-                  "lib/services/monitoring/lib/alertsClient.js",
-                  "lib/services/monitoring/lib/metricsClient.js",
-                  "lib/services/monitoring/lib/eventsClient.js",
-                  "lib/services/networkManagement/lib/virtualNetworkManagementClient.js",
-                  "lib/services/queue/queueservice.js",
-                  "lib/services/scm/scmservice.js",
-                  "lib/services/serviceBus/notificationhubservice.js",
-                  "lib/services/serviceBus/apnsservice.js",
-                  "lib/services/serviceBus/gcmservice.js",
-                  "lib/services/serviceBus/mpnsservice.js",
-                  "lib/services/serviceBus/wnsservice.js",
-                  "lib/services/serviceBus/servicebusservice.js",
-                  "lib/services/serviceBusManagement/lib/serviceBusManagementClient.js",
-                  "lib/services/sql/sqlService.js",
-                  "lib/services/sqlManagement/lib/sqlManagementClient.js",
-                  "lib/services/storageManagement/lib/storageManagementClient.js",
-                  "lib/services/storeManagement/lib/storeManagementClient.js",
-                  "lib/services/subscriptionManagement/lib/subscriptionClient.js",
-                  "lib/services/table/tableservice.js",
-                  "lib/services/webSiteManagement/lib/webSiteManagementClient.js",
-                  "lib/services/webSiteManagement/lib/webSiteExtensionsClient.js",
-                  "lib/services/authorizationManagement/lib/authorizationManagementClient.js",
-                  "lib/services/graph.rbac/lib/graphRbacManagementClient.js",
-                  "lib/services/webSiteManagement2/lib/webSiteManagementClient.js"
-            ],
-            options: {
-                destination: 'docs',
-                configure: 'jsdoc/jsdoc.json'
-            }
+    packageVersions: packageVersions,
+    jsdoc: jsdocConfig,
+    connect: {
+      options: {
+        port: 9000,
+        // Change this to '0.0.0.0' to access the server from outside.
+        hostname: '0.0.0.0',
+        keepalive: true
+      },
+      server: {
+        options: {
+          base: './docs',
         }
-    },
-    devserver: { options:
-      { 'type' : 'http',
-        'port' : 8888,
-        'base' : 'docs'
       }
     }
   });
+
   grunt.loadNpmTasks('grunt-jsdoc');
-  grunt.loadNpmTasks('grunt-devserver');
-
+  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadTasks('tasks');
-
   grunt.registerTask('publishdocs', ['githubPages:target']);
 };
