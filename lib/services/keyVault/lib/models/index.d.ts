@@ -569,11 +569,9 @@ export interface IssuerReference {
  * @member {object} [error] Error encountered, if any, during the certificate
  * operation.
  * 
- * @member {string} [error.code]
+ * @member {string} [error.code] The error code.
  * 
- * @member {string} [error.message]
- * 
- * @member {object} [error.additionalInfo]
+ * @member {string} [error.message] The error message.
  * 
  * @member {string} [target] Location which contains the result of the
  * certificate operation.
@@ -588,26 +586,23 @@ export interface CertificateOperation {
     cancellationRequested?: boolean;
     status?: string;
     statusDetails?: string;
-    error?: KeyVaultError;
+    error?: ErrorModel;
     target?: string;
     requestId?: string;
 }
 
 /**
  * @class
- * Initializes a new instance of the KeyVaultError class.
+ * Initializes a new instance of the ErrorModel class.
  * @constructor
- * @member {string} [code]
+ * @member {string} [code] The error code.
  * 
- * @member {string} [message]
- * 
- * @member {object} [additionalInfo]
+ * @member {string} [message] The error message.
  * 
  */
-export interface KeyVaultError {
+export interface ErrorModel {
     code?: string;
     message?: string;
-    additionalInfo?: any;
 }
 
 /**
@@ -1211,4 +1206,19 @@ export interface BackupKeyResult {
  */
 export interface PendingCertificateSigningRequestResult {
     value?: string;
+}
+
+/**
+ * @class
+ * Initializes a new instance of the KeyVaultError class.
+ * @constructor
+ * @member {object} [error]
+ * 
+ * @member {string} [error.code] The error code.
+ * 
+ * @member {string} [error.message] The error message.
+ * 
+ */
+export interface KeyVaultError {
+    error?: ErrorModel;
 }
