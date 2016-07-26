@@ -745,8 +745,8 @@ declare class KeyVaultClient {
          * 
          * @param {string} [issuer.organizationDetails.id] Id of the organization.
          * 
-         * @param {array} [issuer.organizationDetails.administratorDetails] Details of
-         * the organization administrator.
+         * @param {array} [issuer.organizationDetails.adminDetails] Details of the
+         * organization administrator.
          * 
          * @param {object} [issuer.attributes] Attributes of the issuer object.
          * 
@@ -790,8 +790,8 @@ declare class KeyVaultClient {
          * 
          * @param {string} [issuer.organizationDetails.id] Id of the organization.
          * 
-         * @param {array} [issuer.organizationDetails.administratorDetails] Details of
-         * the organization administrator.
+         * @param {array} [issuer.organizationDetails.adminDetails] Details of the
+         * organization administrator.
          * 
          * @param {object} [issuer.attributes] Attributes of the issuer object.
          * 

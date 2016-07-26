@@ -411,12 +411,12 @@ describe('Key Vault certificates', function () {
 
             var issuerBundle = {
                 provider: 'test',
-                credential : {
+                credentials : {
                     accountId : 'keyvaultuser',
                     password : 'password'
                 },
                 organizationDetails : {
-                    administratorDetails : [{
+                    adminDetails : [{
                             firstName : 'Jane',
                             lastName : 'Doe',
                             emailAddress : 'admin@contoso.com',
@@ -444,12 +444,12 @@ describe('Key Vault certificates', function () {
             function updateCertificateIssuer(next) {
                 var updateIssuer = {
                     provider: 'test',
-                    credential : {
+                    credentials : {
                         accountId : 'xboxuser',
                         password : 'security'
                     },
                     organizationDetails : {
-                        administratorDetails : [{
+                        adminDetails : [{
                                 firstName : 'Jane II',
                                 lastName : 'Doe',
                                 emailAddress : 'admin@contoso2.com',
@@ -503,12 +503,12 @@ describe('Key Vault certificates', function () {
                 
                 var issuerBundle = {
                     provider: 'test',
-                    credential : {
+                    credentials : {
                         accountId : 'keyvaultuser',
                         password : 'password'
                     },
                     organizationDetails : {
-                        administratorDetails : [{
+                        adminDetails : [{
                                 firstName : 'Jane',
                                 lastName : 'Doe',
                                 emailAddress : 'admin@contoso.com',

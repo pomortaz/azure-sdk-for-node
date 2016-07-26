@@ -638,7 +638,7 @@ export interface ErrorModel {
  * 
  * @member {string} [organizationDetails.id] Id of the organization.
  * 
- * @member {array} [organizationDetails.administratorDetails] Details of the
+ * @member {array} [organizationDetails.adminDetails] Details of the
  * organization administrator.
  * 
  * @member {object} [attributes] Attributes of the issuer object.
@@ -679,13 +679,12 @@ export interface IssuerCredentials {
  * @constructor
  * @member {string} [id] Id of the organization.
  * 
- * @member {array} [administratorDetails] Details of the organization
- * administrator.
+ * @member {array} [adminDetails] Details of the organization administrator.
  * 
  */
 export interface OrganizationDetails {
     id?: string;
-    administratorDetails?: AdministratorDetails[];
+    adminDetails?: AdministratorDetails[];
 }
 
 /**

@@ -300,7 +300,13 @@ exports.validateIssuerBundle = function (bundle, vault, issuerName, expectedBund
     should.exist(bundle.attributes);
     should.exist(bundle.organizationDetails);
 
-    should(expectedBundle.provider).be.exactly(bundle.provider);
+    should(bundle.provider).be.exactly(expectedBundle.provider);
+
+    if (expectedBundle.credentials)
+        should(bundle.credentials.accountId).be.exactly(expectedBundle.credentials.accountId);
+        
+    if (expectedBundle.organizationDetails)
+        exports.compareObjects(expectedBundle.organizationDetails, bundle.organizationDetails);
 };
 
 exports.validateCertificateContacts = function (contacts, vault, expectedContacts) {
@@ -314,10 +320,7 @@ exports.validateCertificateContacts = function (contacts, vault, expectedContact
                 return true;
             return false;
         });
-        should.exist(expectedContact);
-        should(expectedContact.emailAddress).be.exactly(contact.emailAddress);
-        should(expectedContact.name).be.exactly(contact.name);
-        should(expectedContact.phone).be.exactly(contact.phone);
+        exports.compareObjects(expectedContact, contact);
     });
 };
 
