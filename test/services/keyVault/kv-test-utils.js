@@ -278,9 +278,11 @@ exports.validateCertificateBundle = function (bundle, vault, certificateName, po
     should.exist(bundle.policy.keyProperties);
     should.exist(bundle.policy.secretProperties);
     should.exist(bundle.policy.lifetimeActions);
-    should.exist(bundle.policy.x509CertificateProperties);    
-    // TODO - BUG cannot deserialize content type:
-    //should(policy.secretProperties.contentType).be.exactly(bundle.policy.secretProperties.contentType);    
+    should.exist(bundle.policy.x509CertificateProperties);
+    if (policy.secretProperties)
+        exports.compareObjects(policy.secretProperties, bundle.policy.secretProperties);    
+    if (policy.keyProperties)
+        exports.compareObjects(policy.keyProperties, bundle.policy.keyProperties);
     if (policy.x509CertificateProperties && policy.x509CertificateProperties.validityInMonths)
         should(policy.x509CertificateProperties.validityInMonths).be.exactly(bundle.policy.x509CertificateProperties.validityInMonths);
 

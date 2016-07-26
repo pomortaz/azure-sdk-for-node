@@ -80,6 +80,8 @@ export interface JsonWebKey {
  * @class
  * Initializes a new instance of the KeyAttributes class.
  * @constructor
+ * The key management attributes
+ *
  */
 export interface KeyAttributes extends Attributes {
 }
@@ -174,6 +176,8 @@ export interface SecretBundle {
  * @class
  * Initializes a new instance of the SecretAttributes class.
  * @constructor
+ * The secret management attributes
+ *
  */
 export interface SecretAttributes extends Attributes {
 }
@@ -203,6 +207,8 @@ export interface SecretItem {
  * @class
  * Initializes a new instance of the CertificateAttributes class.
  * @constructor
+ * The certificate management attributes
+ *
  */
 export interface CertificateAttributes extends Attributes {
 }
@@ -264,7 +270,7 @@ export interface CertificateIssuerItem {
  * @member {boolean} [policy.keyProperties.exportable] Indicates if the
  * private key can be exported.
  * 
- * @member {string} [policy.keyProperties.kty] The key type.
+ * @member {string} [policy.keyProperties.keyType] The key type.
  * 
  * @member {number} [policy.keyProperties.keySize] The key size.
  * 
@@ -283,8 +289,8 @@ export interface CertificateIssuerItem {
  * @member {string} [policy.x509CertificateProperties.subject] The subject
  * name. Should be a valid X500 Distinguished Name.
  * 
- * @member {array} [policy.x509CertificateProperties.ekus] The subject
- * alternate names.
+ * @member {array} [policy.x509CertificateProperties.ekus] The enhaunced key
+ * usage.
  * 
  * @member {object} [policy.x509CertificateProperties.subjectAlternativeNames]
  * The subject alternative names.
@@ -301,8 +307,8 @@ export interface CertificateIssuerItem {
  * [policy.x509CertificateProperties.subjectAlternativeNames.upns] User
  * principal names.
  * 
- * @member {array} [policy.x509CertificateProperties.keyUsage] The subject
- * alternate names.
+ * @member {array} [policy.x509CertificateProperties.keyUsage] List of key
+ * usages.
  * 
  * @member {number} [policy.x509CertificateProperties.validityInMonths] The
  * subject alternate names.
@@ -318,7 +324,7 @@ export interface CertificateIssuerItem {
  * 
  * @member {object} [policy.attributes] The certificate attributes.
  * 
- * @member {buffer} [cer]  CER contents of x509 certificate.
+ * @member {buffer} [cer] CER contents of x509 certificate.
  * 
  * @member {string} [contentType] The content type of the secret
  * 
@@ -352,7 +358,7 @@ export interface CertificateBundle {
  * @member {boolean} [keyProperties.exportable] Indicates if the private key
  * can be exported.
  * 
- * @member {string} [keyProperties.kty] The key type.
+ * @member {string} [keyProperties.keyType] The key type.
  * 
  * @member {number} [keyProperties.keySize] The key size.
  * 
@@ -370,8 +376,7 @@ export interface CertificateBundle {
  * @member {string} [x509CertificateProperties.subject] The subject name.
  * Should be a valid X500 Distinguished Name.
  * 
- * @member {array} [x509CertificateProperties.ekus] The subject alternate
- * names.
+ * @member {array} [x509CertificateProperties.ekus] The enhaunced key usage.
  * 
  * @member {object} [x509CertificateProperties.subjectAlternativeNames] The
  * subject alternative names.
@@ -385,8 +390,7 @@ export interface CertificateBundle {
  * @member {array} [x509CertificateProperties.subjectAlternativeNames.upns]
  * User principal names.
  * 
- * @member {array} [x509CertificateProperties.keyUsage] The subject alternate
- * names.
+ * @member {array} [x509CertificateProperties.keyUsage] List of key usages.
  * 
  * @member {number} [x509CertificateProperties.validityInMonths] The subject
  * alternate names.
@@ -419,7 +423,7 @@ export interface CertificatePolicy {
  * @constructor
  * @member {boolean} [exportable] Indicates if the private key can be exported.
  * 
- * @member {string} [kty] The key type.
+ * @member {string} [keyType] The key type.
  * 
  * @member {number} [keySize] The key size.
  * 
@@ -429,7 +433,7 @@ export interface CertificatePolicy {
  */
 export interface KeyProperties {
     exportable?: boolean;
-    kty?: string;
+    keyType?: string;
     keySize?: number;
     reuseKey?: boolean;
 }
@@ -452,7 +456,7 @@ export interface SecretProperties {
  * @member {string} [subject] The subject name. Should be a valid X500
  * Distinguished Name.
  * 
- * @member {array} [ekus] The subject alternate names.
+ * @member {array} [ekus] The enhaunced key usage.
  * 
  * @member {object} [subjectAlternativeNames] The subject alternative names.
  * 
@@ -462,7 +466,7 @@ export interface SecretProperties {
  * 
  * @member {array} [subjectAlternativeNames.upns] User principal names.
  * 
- * @member {array} [keyUsage] The subject alternate names.
+ * @member {array} [keyUsage] List of key usages.
  * 
  * @member {number} [validityInMonths] The subject alternate names.
  * 
@@ -498,11 +502,15 @@ export interface SubjectAlternativeNames {
  * @constructor
  * @member {object} [trigger] The condition that will execute the action.
  * 
- * @member {number} [trigger.lifetimePercentage] The type of the action.
+ * @member {number} [trigger.lifetimePercentage] Percentage of lifetime as
+ * which to trigger. Value should be between 1 and 99.
+ * 
+ * @member {number} [trigger.daysBeforeExpiry] Days before expiry.
  * 
  * @member {object} [action] The action that will be executed.
  * 
- * @member {string} [action.actionType] The type of the action.
+ * @member {string} [action.actionType] The type of the action. Possible
+ * values include: 'EmailContacts', 'AutoRenew'
  * 
  */
 export interface LifetimeAction {
@@ -514,18 +522,23 @@ export interface LifetimeAction {
  * @class
  * Initializes a new instance of the Trigger class.
  * @constructor
- * @member {number} [lifetimePercentage] The type of the action.
+ * @member {number} [lifetimePercentage] Percentage of lifetime as which to
+ * trigger. Value should be between 1 and 99.
+ * 
+ * @member {number} [daysBeforeExpiry] Days before expiry.
  * 
  */
 export interface Trigger {
     lifetimePercentage?: number;
+    daysBeforeExpiry?: number;
 }
 
 /**
  * @class
  * Initializes a new instance of the Action class.
  * @constructor
- * @member {string} [actionType] The type of the action.
+ * @member {string} [actionType] The type of the action. Possible values
+ * include: 'EmailContacts', 'AutoRenew'
  * 
  */
 export interface Action {
@@ -623,19 +636,7 @@ export interface ErrorModel {
  * @member {object} [organizationDetails] Details of the organization as
  * provided to the issuer.
  * 
- * @member {string} [organizationDetails.name] Name of the organization.
- * 
- * @member {string} [organizationDetails.address1] Address line 1.
- * 
- * @member {string} [organizationDetails.address2] Address line 2.
- * 
- * @member {string} [organizationDetails.city] City.
- * 
- * @member {string} [organizationDetails.zipcode] Zipcode.
- * 
- * @member {string} [organizationDetails.state] State.
- * 
- * @member {string} [organizationDetails.country] Country.
+ * @member {string} [organizationDetails.id] Id of the organization.
  * 
  * @member {array} [organizationDetails.administratorDetails] Details of the
  * organization administrator.
@@ -676,32 +677,14 @@ export interface IssuerCredentials {
  * @class
  * Initializes a new instance of the OrganizationDetails class.
  * @constructor
- * @member {string} [name] Name of the organization.
- * 
- * @member {string} [address1] Address line 1.
- * 
- * @member {string} [address2] Address line 2.
- * 
- * @member {string} [city] City.
- * 
- * @member {string} [zipcode] Zipcode.
- * 
- * @member {string} [state] State.
- * 
- * @member {string} [country] Country.
+ * @member {string} [id] Id of the organization.
  * 
  * @member {array} [administratorDetails] Details of the organization
  * administrator.
  * 
  */
 export interface OrganizationDetails {
-    name?: string;
-    address1?: string;
-    address2?: string;
-    city?: string;
-    zipcode?: string;
-    state?: string;
-    country?: string;
+    id?: string;
     administratorDetails?: AdministratorDetails[];
 }
 
@@ -920,7 +903,7 @@ export interface KeyRestoreParameters {
  * 
  * @member {string} [contentType] Type of the secret value such as a password
  * 
- * @member {object} [secretAttributes]
+ * @member {object} [secretAttributes] The secret management attributes
  * 
  */
 export interface SecretSetParameters {
@@ -936,7 +919,7 @@ export interface SecretSetParameters {
  * @constructor
  * @member {string} [contentType] Type of the secret value such as a password
  * 
- * @member {object} [secretAttributes]
+ * @member {object} [secretAttributes] The secret management attributes
  * 
  * @member {object} [tags] Application-specific metadata in the form of
  * key-value pairs
@@ -952,7 +935,8 @@ export interface SecretUpdateParameters {
  * @class
  * Initializes a new instance of the CertificateCreateParameters class.
  * @constructor
- * @member {object} certificatePolicy The management policy for the certificate
+ * @member {object} [certificatePolicy] The management policy for the
+ * certificate
  * 
  * @member {string} [certificatePolicy.id] The certificate id
  * 
@@ -962,7 +946,7 @@ export interface SecretUpdateParameters {
  * @member {boolean} [certificatePolicy.keyProperties.exportable] Indicates if
  * the private key can be exported.
  * 
- * @member {string} [certificatePolicy.keyProperties.kty] The key type.
+ * @member {string} [certificatePolicy.keyProperties.keyType] The key type.
  * 
  * @member {number} [certificatePolicy.keyProperties.keySize] The key size.
  * 
@@ -982,7 +966,7 @@ export interface SecretUpdateParameters {
  * subject name. Should be a valid X500 Distinguished Name.
  * 
  * @member {array} [certificatePolicy.x509CertificateProperties.ekus] The
- * subject alternate names.
+ * enhaunced key usage.
  * 
  * @member {object}
  * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames] The
@@ -1000,8 +984,8 @@ export interface SecretUpdateParameters {
  * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames.upns]
  * User principal names.
  * 
- * @member {array} [certificatePolicy.x509CertificateProperties.keyUsage] The
- * subject alternate names.
+ * @member {array} [certificatePolicy.x509CertificateProperties.keyUsage] List
+ * of key usages.
  * 
  * @member {number}
  * [certificatePolicy.x509CertificateProperties.validityInMonths] The subject
@@ -1026,7 +1010,7 @@ export interface SecretUpdateParameters {
  * 
  */
 export interface CertificateCreateParameters {
-    certificatePolicy: CertificatePolicy;
+    certificatePolicy?: CertificatePolicy;
     certificateAttributes?: CertificateAttributes;
     tags?: { [propertyName: string]: string };
 }
@@ -1035,14 +1019,15 @@ export interface CertificateCreateParameters {
  * @class
  * Initializes a new instance of the CertificateImportParameters class.
  * @constructor
- * @member {string} base64EncodedCertificate Base64 encoded representaion of
+ * @member {string} base64EncodedCertificate Base64 encoded representation of
  * the certificate object to import. This certificate needs to contain the
  * private key.
  * 
- * @member {string} password If the private key in base64EncodedCertificate is
- * encrypted, the password used for encryption
+ * @member {string} [password] If the private key in base64EncodedCertificate
+ * is encrypted, the password used for encryption
  * 
- * @member {object} certificatePolicy The management policy for the certificate
+ * @member {object} [certificatePolicy] The management policy for the
+ * certificate
  * 
  * @member {string} [certificatePolicy.id] The certificate id
  * 
@@ -1052,7 +1037,7 @@ export interface CertificateCreateParameters {
  * @member {boolean} [certificatePolicy.keyProperties.exportable] Indicates if
  * the private key can be exported.
  * 
- * @member {string} [certificatePolicy.keyProperties.kty] The key type.
+ * @member {string} [certificatePolicy.keyProperties.keyType] The key type.
  * 
  * @member {number} [certificatePolicy.keyProperties.keySize] The key size.
  * 
@@ -1072,7 +1057,7 @@ export interface CertificateCreateParameters {
  * subject name. Should be a valid X500 Distinguished Name.
  * 
  * @member {array} [certificatePolicy.x509CertificateProperties.ekus] The
- * subject alternate names.
+ * enhaunced key usage.
  * 
  * @member {object}
  * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames] The
@@ -1090,8 +1075,8 @@ export interface CertificateCreateParameters {
  * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames.upns]
  * User principal names.
  * 
- * @member {array} [certificatePolicy.x509CertificateProperties.keyUsage] The
- * subject alternate names.
+ * @member {array} [certificatePolicy.x509CertificateProperties.keyUsage] List
+ * of key usages.
  * 
  * @member {number}
  * [certificatePolicy.x509CertificateProperties.validityInMonths] The subject
@@ -1117,8 +1102,8 @@ export interface CertificateCreateParameters {
  */
 export interface CertificateImportParameters {
     base64EncodedCertificate: string;
-    password: string;
-    certificatePolicy: CertificatePolicy;
+    password?: string;
+    certificatePolicy?: CertificatePolicy;
     certificateAttributes?: CertificateAttributes;
     tags?: { [propertyName: string]: string };
 }
@@ -1143,8 +1128,8 @@ export interface CertificateUpdateParameters {
  * @class
  * Initializes a new instance of the CertificateMergeParameters class.
  * @constructor
- * @member {array} x509Certificates The certificate or the certificte chain to
- * merge
+ * @member {array} x509Certificates The certificate or the certificate chain
+ * to merge
  * 
  * @member {object} [certificateAttributes] The attributes of the certificate
  * (optional)

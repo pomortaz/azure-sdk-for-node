@@ -13,7 +13,7 @@ declare class KeyVaultClient {
      * Initializes a new instance of the KeyVaultClient class.
      * @constructor
      *
-     * @param {credentials} credentials - Gets Azure subscription credentials.
+     * @param {credentials} credentials - Credentials needed for the client to connect to Azure.
      *
      * @param {object} [options] - The parameter options
      *
@@ -472,7 +472,7 @@ declare class KeyVaultClient {
          * @param {string} [options.contentType] Type of the secret value such as a
          * password
          * 
-         * @param {object} [options.secretAttributes]
+         * @param {object} [options.secretAttributes] The secret management attributes
          * 
          * @param {boolean} [options.secretAttributes.enabled] Determines whether the
          * object is enabled
@@ -524,7 +524,7 @@ declare class KeyVaultClient {
          * @param {string} [options.contentType] Type of the secret value such as a
          * password
          * 
-         * @param {object} [options.secretAttributes]
+         * @param {object} [options.secretAttributes] The secret management attributes
          * 
          * @param {boolean} [options.secretAttributes.enabled] Determines whether the
          * object is enabled
@@ -743,19 +743,7 @@ declare class KeyVaultClient {
          * @param {object} [issuer.organizationDetails] Details of the organization as
          * provided to the issuer.
          * 
-         * @param {string} [issuer.organizationDetails.name] Name of the organization.
-         * 
-         * @param {string} [issuer.organizationDetails.address1] Address line 1.
-         * 
-         * @param {string} [issuer.organizationDetails.address2] Address line 2.
-         * 
-         * @param {string} [issuer.organizationDetails.city] City.
-         * 
-         * @param {string} [issuer.organizationDetails.zipcode] Zipcode.
-         * 
-         * @param {string} [issuer.organizationDetails.state] State.
-         * 
-         * @param {string} [issuer.organizationDetails.country] Country.
+         * @param {string} [issuer.organizationDetails.id] Id of the organization.
          * 
          * @param {array} [issuer.organizationDetails.administratorDetails] Details of
          * the organization administrator.
@@ -800,19 +788,7 @@ declare class KeyVaultClient {
          * @param {object} [issuer.organizationDetails] Details of the organization as
          * provided to the issuer.
          * 
-         * @param {string} [issuer.organizationDetails.name] Name of the organization.
-         * 
-         * @param {string} [issuer.organizationDetails.address1] Address line 1.
-         * 
-         * @param {string} [issuer.organizationDetails.address2] Address line 2.
-         * 
-         * @param {string} [issuer.organizationDetails.city] City.
-         * 
-         * @param {string} [issuer.organizationDetails.zipcode] Zipcode.
-         * 
-         * @param {string} [issuer.organizationDetails.state] State.
-         * 
-         * @param {string} [issuer.organizationDetails.country] Country.
+         * @param {string} [issuer.organizationDetails.id] Id of the organization.
          * 
          * @param {array} [issuer.organizationDetails.administratorDetails] Details of
          * the organization administrator.
@@ -880,71 +856,77 @@ declare class KeyVaultClient {
          * 
          * @param {string} certificateName The name of the certificate
          * 
-         * @param {object} certificatePolicy The management policy for the certificate
+         * @param {object} [options] Optional Parameters.
          * 
-         * @param {object} [certificatePolicy.keyProperties] Properties of the key
-         * backing a certificate.
+         * @param {object} [options.certificatePolicy] The management policy for the
+         * certificate
          * 
-         * @param {boolean} [certificatePolicy.keyProperties.exportable] Indicates if
-         * the private key can be exported.
+         * @param {object} [options.certificatePolicy.keyProperties] Properties of the
+         * key backing a certificate.
          * 
-         * @param {string} [certificatePolicy.keyProperties.kty] The key type.
+         * @param {boolean} [options.certificatePolicy.keyProperties.exportable]
+         * Indicates if the private key can be exported.
          * 
-         * @param {number} [certificatePolicy.keyProperties.keySize] The key size.
+         * @param {string} [options.certificatePolicy.keyProperties.keyType] The key
+         * type.
          * 
-         * @param {boolean} [certificatePolicy.keyProperties.reuseKey] Indicates if
-         * the same key pair will be used on certificate renewal.
+         * @param {number} [options.certificatePolicy.keyProperties.keySize] The key
+         * size.
          * 
-         * @param {object} [certificatePolicy.secretProperties] Properties of the
-         * secret backing a certificate.
+         * @param {boolean} [options.certificatePolicy.keyProperties.reuseKey]
+         * Indicates if the same key pair will be used on certificate renewal.
          * 
-         * @param {string} [certificatePolicy.secretProperties.contentType] The media
-         * type (MIME type).
+         * @param {object} [options.certificatePolicy.secretProperties] Properties of
+         * the secret backing a certificate.
          * 
-         * @param {object} [certificatePolicy.x509CertificateProperties] Properties of
-         * the X509 component of a certificate.
+         * @param {string} [options.certificatePolicy.secretProperties.contentType]
+         * The media type (MIME type).
          * 
-         * @param {string} [certificatePolicy.x509CertificateProperties.subject] The
-         * subject name. Should be a valid X500 Distinguished Name.
+         * @param {object} [options.certificatePolicy.x509CertificateProperties]
+         * Properties of the X509 component of a certificate.
          * 
-         * @param {array} [certificatePolicy.x509CertificateProperties.ekus] The
-         * subject alternate names.
+         * @param {string}
+         * [options.certificatePolicy.x509CertificateProperties.subject] The subject
+         * name. Should be a valid X500 Distinguished Name.
+         * 
+         * @param {array} [options.certificatePolicy.x509CertificateProperties.ekus]
+         * The enhaunced key usage.
          * 
          * @param {object}
-         * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames] The
-         * subject alternative names.
+         * [options.certificatePolicy.x509CertificateProperties.subjectAlternativeNames]
+         * The subject alternative names.
          * 
          * @param {array}
-         * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames.emails]
+         * [options.certificatePolicy.x509CertificateProperties.subjectAlternativeNames.emails]
          * Email addresses.
          * 
          * @param {array}
-         * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames.dnsNames]
+         * [options.certificatePolicy.x509CertificateProperties.subjectAlternativeNames.dnsNames]
          * Domain names.
          * 
          * @param {array}
-         * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames.upns]
+         * [options.certificatePolicy.x509CertificateProperties.subjectAlternativeNames.upns]
          * User principal names.
          * 
-         * @param {array} [certificatePolicy.x509CertificateProperties.keyUsage] The
-         * subject alternate names.
+         * @param {array}
+         * [options.certificatePolicy.x509CertificateProperties.keyUsage] List of key
+         * usages.
          * 
          * @param {number}
-         * [certificatePolicy.x509CertificateProperties.validityInMonths] The subject
-         * alternate names.
+         * [options.certificatePolicy.x509CertificateProperties.validityInMonths] The
+         * subject alternate names.
          * 
-         * @param {array} [certificatePolicy.lifetimeActions] Actions that will be
-         * performed by Key Vault over the lifetime of a certificate.
+         * @param {array} [options.certificatePolicy.lifetimeActions] Actions that
+         * will be performed by Key Vault over the lifetime of a certificate.
          * 
-         * @param {object} [certificatePolicy.issuerReference] Reference to the issuer
-         * of the X509 component of a certificate.
+         * @param {object} [options.certificatePolicy.issuerReference] Reference to
+         * the issuer of the X509 component of a certificate.
          * 
-         * @param {string} [certificatePolicy.issuerReference.name] Name of the
-         * referenced issuer object.
+         * @param {string} [options.certificatePolicy.issuerReference.name] Name of
+         * the referenced issuer object.
          * 
-         * @param {object} [certificatePolicy.attributes] The certificate attributes.
-         * 
-         * @param {object} [options] Optional Parameters.
+         * @param {object} [options.certificatePolicy.attributes] The certificate
+         * attributes.
          * 
          * @param {object} [options.certificateAttributes] The attributes of the
          * certificate (optional)
@@ -966,8 +948,8 @@ declare class KeyVaultClient {
          * @param {ServiceCallback} [callback] callback function; see ServiceCallback
          * doc in ms-rest index.d.ts for details
          */
-        createCertificate(vaultBaseUrl: string, certificateName: string, certificatePolicy: models.CertificatePolicy, options: { certificateAttributes? : models.CertificateAttributes, tags? : { [propertyName: string]: string }, customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.CertificateOperation>): void;
-        createCertificate(vaultBaseUrl: string, certificateName: string, certificatePolicy: models.CertificatePolicy, callback: ServiceCallback<models.CertificateOperation>): void;
+        createCertificate(vaultBaseUrl: string, certificateName: string, options: { certificatePolicy? : models.CertificatePolicy, certificateAttributes? : models.CertificateAttributes, tags? : { [propertyName: string]: string }, customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.CertificateOperation>): void;
+        createCertificate(vaultBaseUrl: string, certificateName: string, callback: ServiceCallback<models.CertificateOperation>): void;
 
         /**
          * Imports a certificate into the specified vault
@@ -977,78 +959,84 @@ declare class KeyVaultClient {
          * 
          * @param {string} certificateName The name of the certificate
          * 
-         * @param {string} base64EncodedCertificate Base64 encoded representaion of
+         * @param {string} base64EncodedCertificate Base64 encoded representation of
          * the certificate object to import. This certificate needs to contain the
          * private key.
          * 
-         * @param {string} password If the private key in base64EncodedCertificate is
-         * encrypted, the password used for encryption
+         * @param {object} [options] Optional Parameters.
          * 
-         * @param {object} certificatePolicy The management policy for the certificate
+         * @param {string} [options.password] If the private key in
+         * base64EncodedCertificate is encrypted, the password used for encryption
          * 
-         * @param {object} [certificatePolicy.keyProperties] Properties of the key
-         * backing a certificate.
+         * @param {object} [options.certificatePolicy] The management policy for the
+         * certificate
          * 
-         * @param {boolean} [certificatePolicy.keyProperties.exportable] Indicates if
-         * the private key can be exported.
+         * @param {object} [options.certificatePolicy.keyProperties] Properties of the
+         * key backing a certificate.
          * 
-         * @param {string} [certificatePolicy.keyProperties.kty] The key type.
+         * @param {boolean} [options.certificatePolicy.keyProperties.exportable]
+         * Indicates if the private key can be exported.
          * 
-         * @param {number} [certificatePolicy.keyProperties.keySize] The key size.
+         * @param {string} [options.certificatePolicy.keyProperties.keyType] The key
+         * type.
          * 
-         * @param {boolean} [certificatePolicy.keyProperties.reuseKey] Indicates if
-         * the same key pair will be used on certificate renewal.
+         * @param {number} [options.certificatePolicy.keyProperties.keySize] The key
+         * size.
          * 
-         * @param {object} [certificatePolicy.secretProperties] Properties of the
-         * secret backing a certificate.
+         * @param {boolean} [options.certificatePolicy.keyProperties.reuseKey]
+         * Indicates if the same key pair will be used on certificate renewal.
          * 
-         * @param {string} [certificatePolicy.secretProperties.contentType] The media
-         * type (MIME type).
+         * @param {object} [options.certificatePolicy.secretProperties] Properties of
+         * the secret backing a certificate.
          * 
-         * @param {object} [certificatePolicy.x509CertificateProperties] Properties of
-         * the X509 component of a certificate.
+         * @param {string} [options.certificatePolicy.secretProperties.contentType]
+         * The media type (MIME type).
          * 
-         * @param {string} [certificatePolicy.x509CertificateProperties.subject] The
-         * subject name. Should be a valid X500 Distinguished Name.
+         * @param {object} [options.certificatePolicy.x509CertificateProperties]
+         * Properties of the X509 component of a certificate.
          * 
-         * @param {array} [certificatePolicy.x509CertificateProperties.ekus] The
-         * subject alternate names.
+         * @param {string}
+         * [options.certificatePolicy.x509CertificateProperties.subject] The subject
+         * name. Should be a valid X500 Distinguished Name.
+         * 
+         * @param {array} [options.certificatePolicy.x509CertificateProperties.ekus]
+         * The enhaunced key usage.
          * 
          * @param {object}
-         * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames] The
-         * subject alternative names.
+         * [options.certificatePolicy.x509CertificateProperties.subjectAlternativeNames]
+         * The subject alternative names.
          * 
          * @param {array}
-         * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames.emails]
+         * [options.certificatePolicy.x509CertificateProperties.subjectAlternativeNames.emails]
          * Email addresses.
          * 
          * @param {array}
-         * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames.dnsNames]
+         * [options.certificatePolicy.x509CertificateProperties.subjectAlternativeNames.dnsNames]
          * Domain names.
          * 
          * @param {array}
-         * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames.upns]
+         * [options.certificatePolicy.x509CertificateProperties.subjectAlternativeNames.upns]
          * User principal names.
          * 
-         * @param {array} [certificatePolicy.x509CertificateProperties.keyUsage] The
-         * subject alternate names.
+         * @param {array}
+         * [options.certificatePolicy.x509CertificateProperties.keyUsage] List of key
+         * usages.
          * 
          * @param {number}
-         * [certificatePolicy.x509CertificateProperties.validityInMonths] The subject
-         * alternate names.
+         * [options.certificatePolicy.x509CertificateProperties.validityInMonths] The
+         * subject alternate names.
          * 
-         * @param {array} [certificatePolicy.lifetimeActions] Actions that will be
-         * performed by Key Vault over the lifetime of a certificate.
+         * @param {array} [options.certificatePolicy.lifetimeActions] Actions that
+         * will be performed by Key Vault over the lifetime of a certificate.
          * 
-         * @param {object} [certificatePolicy.issuerReference] Reference to the issuer
-         * of the X509 component of a certificate.
+         * @param {object} [options.certificatePolicy.issuerReference] Reference to
+         * the issuer of the X509 component of a certificate.
          * 
-         * @param {string} [certificatePolicy.issuerReference.name] Name of the
-         * referenced issuer object.
+         * @param {string} [options.certificatePolicy.issuerReference.name] Name of
+         * the referenced issuer object.
          * 
-         * @param {object} [certificatePolicy.attributes] The certificate attributes.
-         * 
-         * @param {object} [options] Optional Parameters.
+         * @param {object} [options.certificatePolicy.attributes] The certificate
+         * attributes.
          * 
          * @param {object} [options.certificateAttributes] The attributes of the
          * certificate (optional)
@@ -1070,8 +1058,8 @@ declare class KeyVaultClient {
          * @param {ServiceCallback} [callback] callback function; see ServiceCallback
          * doc in ms-rest index.d.ts for details
          */
-        importCertificate(vaultBaseUrl: string, certificateName: string, base64EncodedCertificate: string, password: string, certificatePolicy: models.CertificatePolicy, options: { certificateAttributes? : models.CertificateAttributes, tags? : { [propertyName: string]: string }, customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.CertificateBundle>): void;
-        importCertificate(vaultBaseUrl: string, certificateName: string, base64EncodedCertificate: string, password: string, certificatePolicy: models.CertificatePolicy, callback: ServiceCallback<models.CertificateBundle>): void;
+        importCertificate(vaultBaseUrl: string, certificateName: string, base64EncodedCertificate: string, options: { password? : string, certificatePolicy? : models.CertificatePolicy, certificateAttributes? : models.CertificateAttributes, tags? : { [propertyName: string]: string }, customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.CertificateBundle>): void;
+        importCertificate(vaultBaseUrl: string, certificateName: string, base64EncodedCertificate: string, callback: ServiceCallback<models.CertificateBundle>): void;
 
         /**
          * List the versions of a certificate.
@@ -1132,7 +1120,7 @@ declare class KeyVaultClient {
          * @param {boolean} [certificatePolicy.keyProperties.exportable] Indicates if
          * the private key can be exported.
          * 
-         * @param {string} [certificatePolicy.keyProperties.kty] The key type.
+         * @param {string} [certificatePolicy.keyProperties.keyType] The key type.
          * 
          * @param {number} [certificatePolicy.keyProperties.keySize] The key size.
          * 
@@ -1152,7 +1140,7 @@ declare class KeyVaultClient {
          * subject name. Should be a valid X500 Distinguished Name.
          * 
          * @param {array} [certificatePolicy.x509CertificateProperties.ekus] The
-         * subject alternate names.
+         * enhaunced key usage.
          * 
          * @param {object}
          * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames] The
@@ -1170,8 +1158,8 @@ declare class KeyVaultClient {
          * [certificatePolicy.x509CertificateProperties.subjectAlternativeNames.upns]
          * User principal names.
          * 
-         * @param {array} [certificatePolicy.x509CertificateProperties.keyUsage] The
-         * subject alternate names.
+         * @param {array} [certificatePolicy.x509CertificateProperties.keyUsage] List
+         * of key usages.
          * 
          * @param {number}
          * [certificatePolicy.x509CertificateProperties.validityInMonths] The subject
@@ -1360,7 +1348,7 @@ declare class KeyVaultClient {
          * 
          * @param {string} certificateName The name of the certificate
          * 
-         * @param {array} x509Certificates The certificate or the certificte chain to
+         * @param {array} x509Certificates The certificate or the certificate chain to
          * merge
          * 
          * @param {object} [options] Optional Parameters.

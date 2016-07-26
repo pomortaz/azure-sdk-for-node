@@ -21,6 +21,7 @@ var KeyVault = Testutil.libRequire('services/keyVault');
 var MockedTestUtils = require('../../framework/mocked-test-utils');
 var KvUtils = require('./kv-test-utils.js');
 var util = require('util');
+var should = require('should');
 
 var series = KvUtils.series;
 var assertExactly = KvUtils.assertExactly;
@@ -230,7 +231,7 @@ describe('Key Vault secrets', function () {
                 var currentResult;
                 client.getSecrets(vaultUri, { maxresults: LIST_TEST_SIZE }, function (err, result) {
                     if (err) throw err;
-                    // BUG!!! should(LIST_TEST_SIZE).be.exactly(result.length);
+                    should(result.length).be.within(0, LIST_TEST_SIZE);
                     validateSecretList(result, expected);
                     currentResult = result;
                     if (currentResult.nextLink) {

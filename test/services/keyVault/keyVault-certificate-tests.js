@@ -164,7 +164,7 @@ describe('Key Vault certificates', function () {
                     exportable: true,
                     reuseKey : false,
                     keySize : 2048,
-                    kty : 'RSA'
+                    keyType : 'RSA'
                 },                    
                 secretProperties : {
                     contentType : 'application/x-pkcs12'
@@ -180,8 +180,11 @@ describe('Key Vault certificates', function () {
             };
 
 			function createCertificate(next) {
-
-                client.createCertificate(vaultUri, CERTIFICATE_NAME, certificatePolicy, function (err, certificateOperation) {
+                var intervalTime = 5000;
+                if (suiteUtil.isRecording !== "true") {
+                    intervalTime = 0;
+                }
+                client.createCertificate(vaultUri, CERTIFICATE_NAME, { certificatePolicy: certificatePolicy }, function (err, certificateOperation) {
                     if (err) throw err;
                     var interval = setInterval(function getCertStatus() {
                         client.getCertificateOperation(vaultUri, CERTIFICATE_NAME, function (err, pendingCertificate) {
@@ -198,7 +201,7 @@ describe('Key Vault certificates', function () {
                                 throw new Error('UnKnown status code for pending certificate: ' + util.inspect(pendingCertificate, { depth: null }));
                             }
                         });
-                    }, 5000);
+                    }, intervalTime);
                 });
             }
 
@@ -301,7 +304,7 @@ describe('Key Vault certificates', function () {
             function listCertificate(next){
                 client.getCertificates(vaultUri, { maxresults: LIST_TEST_SIZE }, function (err, certList) {
                     if (err) throw err;
-                    should(LIST_TEST_SIZE).be.exactly(certList.length);                    
+                    should(certList.length).be.within(0, LIST_TEST_SIZE);                    
                     validateCertificateList(certList, expected);
                     if (certList.nextLink) {
                         return getNextCertificates(certList.nextLink);
@@ -361,7 +364,7 @@ describe('Key Vault certificates', function () {
             function listCertificateVersions(next) {
                 client.getCertificateVersions(vaultUri, CERTIFICATE_NAME, { maxresults: LIST_TEST_SIZE }, function (err, certVersionList) {
                     if (err) throw err;
-                    should(LIST_TEST_SIZE).be.exactly(certVersionList.length);
+                    should(certVersionList.length).be.within(0, LIST_TEST_SIZE);
                     validateCertificateList(certVersionList, expected);
                     if (certVersionList.nextLink) {
                         return getNextCertificateVersions(certVersionList.nextLink);
@@ -528,13 +531,13 @@ describe('Key Vault certificates', function () {
             
             function listCertificateIssuers(next) {
                 
-                client.getCertificateIssuers(vaultUri, { maxresults: LIST_TEST_SIZE }, function (err, issuerList) {
+                client.getCertificateIssuers(vaultUri, { maxresults: LIST_TEST_SIZE }, function (err, issuerList1) {
                     if (err) throw err;
-                    validateCertificateIssuerList(issuerList, expected);
-                    // TODO - Bug: should(LIST_TEST_SIZE).be.exactly(issuerList.length);                       
+                    validateCertificateIssuerList(issuerList1, expected);
+                    should(issuerList1.length).be.within(0, LIST_TEST_SIZE);                       
                     
-                    if (issuerList.nextLink) {
-                        return getNextIssuers();
+                    if (issuerList1.nextLink) {
+                        return getNextIssuers(issuerList1.nextLink);
                     }
                     
                     if (expected.length && expected.length !== 0) {
@@ -542,12 +545,12 @@ describe('Key Vault certificates', function () {
                     }
                     next();
                     
-                    function getNextIssuers() {
-                        client.getCertificateIssuersNext(issuerList.nextLink, function (err, issuerList) {
+                    function getNextIssuers(nextList) {
+                        client.getCertificateIssuersNext(nextList, function (err, issuerList) {
                             if (err) throw err;
                             validateCertificateIssuerList(issuerList, expected);
                             if (issuerList.nextLink) {
-                                return getNextIssuers();
+                                return getNextIssuers(issuerList.nextLink);
                             }
                             if (expected.length && expected.length !== 0) {
                                 throw new Error('Not all issuers were returned: ' + JSON.stringify(expected, null, ' '));
@@ -578,7 +581,7 @@ describe('Key Vault certificates', function () {
                     exportable: true,
                     reuseKey : false,
                     keySize : 2048,
-                    kty : 'RSA'
+                    keyType : 'RSA'
                 },                    
                 secretProperties : {
                     contentType : 'application/x-pkcs12'
@@ -595,7 +598,7 @@ describe('Key Vault certificates', function () {
             
             function createCertificate(next) {
                 
-                client.createCertificate(vaultUri, certificateName, certificatePolicy, function (err, certificateOperation) {
+                client.createCertificate(vaultUri, certificateName, { certificatePolicy: certificatePolicy} , function (err, certificateOperation) {
                     if (err) throw err;
                     next();
                 });
@@ -743,7 +746,7 @@ describe('Key Vault certificates', function () {
                         exportable: true,
                         reuseKey : false,
                         keySize : 2048,
-                        kty : 'RSA'
+                        keyType : 'RSA'
                     },                    
                     secretProperties : {
                         contentType : 'application/x-pkcs12'
@@ -777,13 +780,13 @@ describe('Key Vault certificates', function () {
             
             this.timeout(10000);
             
-            var certificateName = "UnknownIssuerCert";
+            var certificateName = "UnknownIssuerCert1";
             var certificatePolicy = {
                 keyProperties : {
                     exportable: true,
                     reuseKey : false,
                     keySize : 2048,
-                    kty : 'RSA'
+                    keyType : 'RSA'
                 },                    
                 secretProperties : {
                     contentType : 'application/x-pkcs12'
@@ -799,7 +802,7 @@ describe('Key Vault certificates', function () {
             
             function getPendingCertificateSigningRequest(next) {
     
-                client.createCertificate(vaultUri, certificateName, certificatePolicy, function (err, certificateOperation) {
+                client.createCertificate(vaultUri, certificateName, { certificatePolicy: certificatePolicy }, function (err, certificateOperation) {
                     if (err) throw err;
                     
                     try {
@@ -835,14 +838,14 @@ describe('Key Vault certificates', function () {
                 exportable: true,
                 reuseKey : false,
                 keySize : 2048,
-                kty : 'RSA'
+                keyType : 'RSA'
             },                    
             secretProperties : {
                 contentType : 'application/x-pkcs12'
             }
         };
         
-        client.importCertificate(vaultUri, certificateName, certificateContent, certificatePassword, certificatePolicy, function (err, bundle) {
+        client.importCertificate(vaultUri, certificateName, certificateContent, { password: certificatePassword, certificatePolicy: certificatePolicy }, function (err, bundle) {
             callback(err, bundle, certificatePolicy);        
         });
     }
