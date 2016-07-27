@@ -10,6 +10,8 @@
  * @class
  * Initializes a new instance of the Attributes class.
  * @constructor
+ * The object attributes managed by the KeyVault service
+ *
  * @member {boolean} [enabled] Determines whether the object is enabled
  * 
  * @member {date} [notBefore] Not before date in UTC
@@ -33,6 +35,8 @@ export interface Attributes {
  * @class
  * Initializes a new instance of the JsonWebKey class.
  * @constructor
+ * As of http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18
+ *
  * @member {string} [kid] Key Identifier
  * 
  * @member {string} [kty] Key type, usually RSA
@@ -45,15 +49,15 @@ export interface Attributes {
  * 
  * @member {buffer} [d] RSA private exponent
  * 
- * @member {buffer} [dp]
+ * @member {buffer} [dp] RSA Private Key Parameter
  * 
- * @member {buffer} [dq]
+ * @member {buffer} [dq] RSA Private Key Parameter
  * 
- * @member {buffer} [qi]
+ * @member {buffer} [qi] RSA Private Key Parameter
  * 
- * @member {buffer} [p]
+ * @member {buffer} [p] RSA secret prime
  * 
- * @member {buffer} [q]
+ * @member {buffer} [q] RSA secret prime, with p < q
  * 
  * @member {buffer} [k] Symmetric key
  * 
@@ -80,7 +84,7 @@ export interface JsonWebKey {
  * @class
  * Initializes a new instance of the KeyAttributes class.
  * @constructor
- * The key management attributes
+ * The attributes of a key managed by the KeyVault service
  *
  */
 export interface KeyAttributes extends Attributes {
@@ -90,6 +94,8 @@ export interface KeyAttributes extends Attributes {
  * @class
  * Initializes a new instance of the KeyBundle class.
  * @constructor
+ * A KeyBundle consisting of a WebKey plus its Attributes
+ *
  * @member {object} [key] The Json web key
  * 
  * @member {string} [key.kid] Key Identifier
@@ -104,15 +110,15 @@ export interface KeyAttributes extends Attributes {
  * 
  * @member {buffer} [key.d] RSA private exponent
  * 
- * @member {buffer} [key.dp]
+ * @member {buffer} [key.dp] RSA Private Key Parameter
  * 
- * @member {buffer} [key.dq]
+ * @member {buffer} [key.dq] RSA Private Key Parameter
  * 
- * @member {buffer} [key.qi]
+ * @member {buffer} [key.qi] RSA Private Key Parameter
  * 
- * @member {buffer} [key.p]
+ * @member {buffer} [key.p] RSA secret prime
  * 
- * @member {buffer} [key.q]
+ * @member {buffer} [key.q] RSA secret prime, with p < q
  * 
  * @member {buffer} [key.k] Symmetric key
  * 
@@ -134,6 +140,8 @@ export interface KeyBundle {
  * @class
  * Initializes a new instance of the KeyItem class.
  * @constructor
+ * The key item containing key metadata
+ *
  * @member {string} [kid] Key Identifier
  * 
  * @member {object} [attributes] The key management attributes
@@ -152,6 +160,8 @@ export interface KeyItem {
  * @class
  * Initializes a new instance of the SecretBundle class.
  * @constructor
+ * A Secret consisting of a value, id and its attributes.
+ *
  * @member {string} [value] The secret value
  * 
  * @member {string} [id] The secret id
@@ -186,6 +196,8 @@ export interface SecretAttributes extends Attributes {
  * @class
  * Initializes a new instance of the SecretItem class.
  * @constructor
+ * The secret item containing secret metadata
+ *
  * @member {string} [id] Secret Identifier
  * 
  * @member {object} [attributes] The secret management attributes
@@ -217,6 +229,8 @@ export interface CertificateAttributes extends Attributes {
  * @class
  * Initializes a new instance of the CertificateItem class.
  * @constructor
+ * The certificate item containing certificate metadata
+ *
  * @member {string} [id] Certificate Identifier
  * 
  * @member {object} [attributes] The certificate management attributes
@@ -238,6 +252,8 @@ export interface CertificateItem {
  * @class
  * Initializes a new instance of the CertificateIssuerItem class.
  * @constructor
+ * The certificate issuer item containing certificate issuer metadata
+ *
  * @member {string} [id] Certificate Identifier
  * 
  * @member {string} [provider] The name of the issuer.
@@ -252,6 +268,8 @@ export interface CertificateIssuerItem {
  * @class
  * Initializes a new instance of the CertificateBundle class.
  * @constructor
+ * A certificate bundle consists of a certificate (X509) plus its attributes.
+ *
  * @member {string} [id] The certificate id
  * 
  * @member {string} [kid] The key id
@@ -287,7 +305,7 @@ export interface CertificateIssuerItem {
  * component of a certificate.
  * 
  * @member {string} [policy.x509CertificateProperties.subject] The subject
- * name. Should be a valid X500 Distinguished Name.
+ * name. Should be a valid X509 Distinguished Name.
  * 
  * @member {array} [policy.x509CertificateProperties.ekus] The enhaunced key
  * usage.
@@ -350,6 +368,8 @@ export interface CertificateBundle {
  * @class
  * Initializes a new instance of the CertificatePolicy class.
  * @constructor
+ * Management policy for a certificate.
+ *
  * @member {string} [id] The certificate id
  * 
  * @member {object} [keyProperties] Properties of the key backing a
@@ -374,7 +394,7 @@ export interface CertificateBundle {
  * component of a certificate.
  * 
  * @member {string} [x509CertificateProperties.subject] The subject name.
- * Should be a valid X500 Distinguished Name.
+ * Should be a valid X509 Distinguished Name.
  * 
  * @member {array} [x509CertificateProperties.ekus] The enhaunced key usage.
  * 
@@ -421,6 +441,8 @@ export interface CertificatePolicy {
  * @class
  * Initializes a new instance of the KeyProperties class.
  * @constructor
+ * Properties of the key pair backing a certificate.
+ *
  * @member {boolean} [exportable] Indicates if the private key can be exported.
  * 
  * @member {string} [keyType] The key type.
@@ -442,6 +464,8 @@ export interface KeyProperties {
  * @class
  * Initializes a new instance of the SecretProperties class.
  * @constructor
+ * Properties of the key backing a certificate.
+ *
  * @member {string} [contentType] The media type (MIME type).
  * 
  */
@@ -453,7 +477,9 @@ export interface SecretProperties {
  * @class
  * Initializes a new instance of the X509CertificateProperties class.
  * @constructor
- * @member {string} [subject] The subject name. Should be a valid X500
+ * Properties of the X509 component of a certificate.
+ *
+ * @member {string} [subject] The subject name. Should be a valid X509
  * Distinguished Name.
  * 
  * @member {array} [ekus] The enhaunced key usage.
@@ -483,6 +509,8 @@ export interface X509CertificateProperties {
  * @class
  * Initializes a new instance of the SubjectAlternativeNames class.
  * @constructor
+ * The subject alternate names of a X509 object.
+ *
  * @member {array} [emails] Email addresses.
  * 
  * @member {array} [dnsNames] Domain names.
@@ -500,6 +528,9 @@ export interface SubjectAlternativeNames {
  * @class
  * Initializes a new instance of the LifetimeAction class.
  * @constructor
+ * Action and its trigger that will be performed by Key Vault over the
+ * lifetime of a certificate.
+ *
  * @member {object} [trigger] The condition that will execute the action.
  * 
  * @member {number} [trigger.lifetimePercentage] Percentage of lifetime as
@@ -522,6 +553,8 @@ export interface LifetimeAction {
  * @class
  * Initializes a new instance of the Trigger class.
  * @constructor
+ * A condition to be satisfied for an action to be executed.
+ *
  * @member {number} [lifetimePercentage] Percentage of lifetime as which to
  * trigger. Value should be between 1 and 99.
  * 
@@ -537,6 +570,8 @@ export interface Trigger {
  * @class
  * Initializes a new instance of the Action class.
  * @constructor
+ * The action that will be executed.
+ *
  * @member {string} [actionType] The type of the action. Possible values
  * include: 'EmailContacts', 'AutoRenew'
  * 
@@ -549,6 +584,8 @@ export interface Action {
  * @class
  * Initializes a new instance of the IssuerReference class.
  * @constructor
+ * Reference to the issuer of the X509 component of a certificate.
+ *
  * @member {string} [name] Name of the referenced issuer object.
  * 
  */
@@ -560,6 +597,8 @@ export interface IssuerReference {
  * @class
  * Initializes a new instance of the CertificateOperation class.
  * @constructor
+ * A certificate operation is returned in case of async requests.
+ *
  * @member {string} [id] The certificate id
  * 
  * @member {object} [issuerReference] Reference to the issuer of the X509
@@ -608,6 +647,8 @@ export interface CertificateOperation {
  * @class
  * Initializes a new instance of the ErrorModel class.
  * @constructor
+ * The key vault server error
+ *
  * @member {string} [code] The error code.
  * 
  * @member {string} [message] The error message.
@@ -622,6 +663,8 @@ export interface ErrorModel {
  * @class
  * Initializes a new instance of the IssuerBundle class.
  * @constructor
+ * The issuer for Key Vault certificate
+ *
  * @member {string} [id] Identifier for the issuer object.
  * 
  * @member {string} [provider] The name of the issuer.
@@ -663,6 +706,8 @@ export interface IssuerBundle {
  * @class
  * Initializes a new instance of the IssuerCredentials class.
  * @constructor
+ * The credentials to be used for the certificate issuer.
+ *
  * @member {string} [accountId] The user name/account name/account id.
  * 
  * @member {string} [password] The password/secret/account key.
@@ -677,6 +722,8 @@ export interface IssuerCredentials {
  * @class
  * Initializes a new instance of the OrganizationDetails class.
  * @constructor
+ * Details of the organization of the certificate issuer.
+ *
  * @member {string} [id] Id of the organization.
  * 
  * @member {array} [adminDetails] Details of the organization administrator.
@@ -691,6 +738,8 @@ export interface OrganizationDetails {
  * @class
  * Initializes a new instance of the AdministratorDetails class.
  * @constructor
+ * Details of the organization administrator of the certificate issuer
+ *
  * @member {string} [firstName] First name.
  * 
  * @member {string} [lastName] Last name.
@@ -711,6 +760,8 @@ export interface AdministratorDetails {
  * @class
  * Initializes a new instance of the IssuerAttributes class.
  * @constructor
+ * The attributes of an issuer managed by the KeyVault service
+ *
  * @member {boolean} [enabled] Determines whether the issuer is enabled
  * 
  * @member {date} [created] Creation time in UTC
@@ -728,9 +779,11 @@ export interface IssuerAttributes {
  * @class
  * Initializes a new instance of the Contacts class.
  * @constructor
+ * The contacts for the vault certificates.
+ *
  * @member {string} [id] Identifier for the contacts collection.
  * 
- * @member {array} [contactList] Contacts.
+ * @member {array} [contactList] The contact list for the vault certificates.
  * 
  */
 export interface Contacts {
@@ -742,6 +795,8 @@ export interface Contacts {
  * @class
  * Initializes a new instance of the Contact class.
  * @constructor
+ * The contact information for the vault certificates.
+ *
  * @member {string} [emailAddress] Email addresss.
  * 
  * @member {string} [name] Name.
@@ -759,6 +814,8 @@ export interface Contact {
  * @class
  * Initializes a new instance of the KeyCreateParameters class.
  * @constructor
+ * The key create parameters
+ *
  * @member {string} kty The type of key to create. For valid key types, see
  * WebKeyTypes.
  * 
@@ -784,6 +841,8 @@ export interface KeyCreateParameters {
  * @class
  * Initializes a new instance of the KeyImportParameters class.
  * @constructor
+ * The key import parameters
+ *
  * @member {boolean} [hsm] Whether to import as a hardware key (HSM) or
  * software key
  * 
@@ -801,15 +860,15 @@ export interface KeyCreateParameters {
  * 
  * @member {buffer} [key.d] RSA private exponent
  * 
- * @member {buffer} [key.dp]
+ * @member {buffer} [key.dp] RSA Private Key Parameter
  * 
- * @member {buffer} [key.dq]
+ * @member {buffer} [key.dq] RSA Private Key Parameter
  * 
- * @member {buffer} [key.qi]
+ * @member {buffer} [key.qi] RSA Private Key Parameter
  * 
- * @member {buffer} [key.p]
+ * @member {buffer} [key.p] RSA secret prime
  * 
- * @member {buffer} [key.q]
+ * @member {buffer} [key.q] RSA secret prime, with p < q
  * 
  * @member {buffer} [key.k] Symmetric key
  * 
@@ -832,6 +891,8 @@ export interface KeyImportParameters {
  * @class
  * Initializes a new instance of the KeyOperationsParameters class.
  * @constructor
+ * The key operations parameters
+ *
  * @member {string} algorithm algorithm identifier
  * 
  * @member {buffer} value
@@ -846,6 +907,8 @@ export interface KeyOperationsParameters {
  * @class
  * Initializes a new instance of the KeyVerifyParameters class.
  * @constructor
+ * The key verify parameters
+ *
  * @member {string} algorithm The signing/verification algorithm. For more
  * information on possible algorithm types, see JsonWebKeySignatureAlgorithm.
  * 
@@ -864,6 +927,8 @@ export interface KeyVerifyParameters {
  * @class
  * Initializes a new instance of the KeyUpdateParameters class.
  * @constructor
+ * The key update parameters
+ *
  * @member {array} [keyOps] Json web key operations. For more information on
  * possible key operations, see JsonWebKeyOperation.
  * 
@@ -883,6 +948,8 @@ export interface KeyUpdateParameters {
  * @class
  * Initializes a new instance of the KeyRestoreParameters class.
  * @constructor
+ * The key restore parameters
+ *
  * @member {buffer} keyBundleBackup the backup blob associated with a key
  * bundle
  * 
@@ -895,6 +962,8 @@ export interface KeyRestoreParameters {
  * @class
  * Initializes a new instance of the SecretSetParameters class.
  * @constructor
+ * The secret set parameters
+ *
  * @member {string} value The value of the secret
  * 
  * @member {object} [tags] Application-specific metadata in the form of
@@ -916,6 +985,8 @@ export interface SecretSetParameters {
  * @class
  * Initializes a new instance of the SecretUpdateParameters class.
  * @constructor
+ * The secret update parameters
+ *
  * @member {string} [contentType] Type of the secret value such as a password
  * 
  * @member {object} [secretAttributes] The secret management attributes
@@ -934,6 +1005,8 @@ export interface SecretUpdateParameters {
  * @class
  * Initializes a new instance of the CertificateCreateParameters class.
  * @constructor
+ * The certificate create parameters
+ *
  * @member {object} [certificatePolicy] The management policy for the
  * certificate
  * 
@@ -962,7 +1035,7 @@ export interface SecretUpdateParameters {
  * of the X509 component of a certificate.
  * 
  * @member {string} [certificatePolicy.x509CertificateProperties.subject] The
- * subject name. Should be a valid X500 Distinguished Name.
+ * subject name. Should be a valid X509 Distinguished Name.
  * 
  * @member {array} [certificatePolicy.x509CertificateProperties.ekus] The
  * enhaunced key usage.
@@ -1018,6 +1091,8 @@ export interface CertificateCreateParameters {
  * @class
  * Initializes a new instance of the CertificateImportParameters class.
  * @constructor
+ * The certificate import parameters
+ *
  * @member {string} base64EncodedCertificate Base64 encoded representation of
  * the certificate object to import. This certificate needs to contain the
  * private key.
@@ -1053,7 +1128,7 @@ export interface CertificateCreateParameters {
  * of the X509 component of a certificate.
  * 
  * @member {string} [certificatePolicy.x509CertificateProperties.subject] The
- * subject name. Should be a valid X500 Distinguished Name.
+ * subject name. Should be a valid X509 Distinguished Name.
  * 
  * @member {array} [certificatePolicy.x509CertificateProperties.ekus] The
  * enhaunced key usage.
@@ -1111,6 +1186,8 @@ export interface CertificateImportParameters {
  * @class
  * Initializes a new instance of the CertificateUpdateParameters class.
  * @constructor
+ * The certificate update parameters
+ *
  * @member {object} [certificateAttributes] The attributes of the certificate
  * (optional)
  * 
@@ -1127,6 +1204,8 @@ export interface CertificateUpdateParameters {
  * @class
  * Initializes a new instance of the CertificateMergeParameters class.
  * @constructor
+ * The certificate merge parameters
+ *
  * @member {array} x509Certificates The certificate or the certificate chain
  * to merge
  * 
@@ -1147,6 +1226,8 @@ export interface CertificateMergeParameters {
  * @class
  * Initializes a new instance of the KeyOperationResult class.
  * @constructor
+ * The key operation result
+ *
  * @member {string} [kid] Key identifier
  * 
  * @member {buffer} [result]
@@ -1161,6 +1242,8 @@ export interface KeyOperationResult {
  * @class
  * Initializes a new instance of the KeyVerifyResult class.
  * @constructor
+ * The key verify result
+ *
  * @member {boolean} [value] true if the signature is verified, false
  * otherwise.
  * 
@@ -1173,6 +1256,8 @@ export interface KeyVerifyResult {
  * @class
  * Initializes a new instance of the BackupKeyResult class.
  * @constructor
+ * The backup key result, containing the backup blob
+ *
  * @member {buffer} [value] The backup blob containing the backed up key
  * 
  */
@@ -1184,6 +1269,8 @@ export interface BackupKeyResult {
  * @class
  * Initializes a new instance of the PendingCertificateSigningRequestResult class.
  * @constructor
+ * The pending certificate signing request result
+ *
  * @member {string} [value] The pending certificate signing request as Base64
  * encoded string.
  * 
@@ -1196,6 +1283,8 @@ export interface PendingCertificateSigningRequestResult {
  * @class
  * Initializes a new instance of the KeyVaultError class.
  * @constructor
+ * the key vault error exception
+ *
  * @member {object} [error]
  * 
  * @member {string} [error.code] The error code.

@@ -105,15 +105,15 @@ declare class KeyVaultClient {
          * 
          * @param {buffer} [key.d] RSA private exponent
          * 
-         * @param {buffer} [key.dp]
+         * @param {buffer} [key.dp] RSA Private Key Parameter
          * 
-         * @param {buffer} [key.dq]
+         * @param {buffer} [key.dq] RSA Private Key Parameter
          * 
-         * @param {buffer} [key.qi]
+         * @param {buffer} [key.qi] RSA Private Key Parameter
          * 
-         * @param {buffer} [key.p]
+         * @param {buffer} [key.p] RSA secret prime
          * 
-         * @param {buffer} [key.q]
+         * @param {buffer} [key.q] RSA secret prime, with p < q
          * 
          * @param {buffer} [key.k] Symmetric key
          * 
@@ -651,9 +651,10 @@ declare class KeyVaultClient {
          * @param {string} vaultBaseUrl The vault name, e.g.
          * https://myvault.vault.azure.net
          * 
-         * @param {object} contacts Contacts.
+         * @param {object} contacts The contacts for the vault certificates.
          * 
-         * @param {array} [contacts.contactList] Contacts.
+         * @param {array} [contacts.contactList] The contact list for the vault
+         * certificates.
          * 
          * @param {object} [options] Optional Parameters.
          * 
@@ -887,7 +888,7 @@ declare class KeyVaultClient {
          * 
          * @param {string}
          * [options.certificatePolicy.x509CertificateProperties.subject] The subject
-         * name. Should be a valid X500 Distinguished Name.
+         * name. Should be a valid X509 Distinguished Name.
          * 
          * @param {array} [options.certificatePolicy.x509CertificateProperties.ekus]
          * The enhaunced key usage.
@@ -997,7 +998,7 @@ declare class KeyVaultClient {
          * 
          * @param {string}
          * [options.certificatePolicy.x509CertificateProperties.subject] The subject
-         * name. Should be a valid X500 Distinguished Name.
+         * name. Should be a valid X509 Distinguished Name.
          * 
          * @param {array} [options.certificatePolicy.x509CertificateProperties.ekus]
          * The enhaunced key usage.
@@ -1137,7 +1138,7 @@ declare class KeyVaultClient {
          * the X509 component of a certificate.
          * 
          * @param {string} [certificatePolicy.x509CertificateProperties.subject] The
-         * subject name. Should be a valid X500 Distinguished Name.
+         * subject name. Should be a valid X509 Distinguished Name.
          * 
          * @param {array} [certificatePolicy.x509CertificateProperties.ekus] The
          * enhaunced key usage.
