@@ -10,33 +10,45 @@
  * @class
  * Initializes a new instance of the Sku class.
  * @constructor
- * @member {string} [family] SKU family name
+ * SKU details
+ *
+ * @member {string} [family] SKU family name. Possible values include: 'A'
  * 
- * @member {string} [name] SKU name
+ * @member {string} name SKU name to specify whether the key vault is a
+ * standard vault or a premium vault. Possible values include: 'standard',
+ * 'premium'
  * 
  */
 export interface Sku {
     family?: string;
-    name?: string;
+    name: string;
 }
 
 /**
  * @class
  * Initializes a new instance of the AccessPolicyEntry class.
  * @constructor
- * @member {uuid} [tenantId] Tenant ID of the principal
+ * An array of 0 to 16 identities that have access to the key vault. All
+ * identities in the array must use the same tenant ID as the key vault's
+ * tenant ID.
+ *
+ * @member {uuid} [tenantId] The Azure Active Directory tenant ID that should
+ * be used for authenticating requests to the key vault.
  * 
- * @member {uuid} [objectId] Object ID of the principal
+ * @member {uuid} [objectId] The object ID of a user or service principal in
+ * the Azure Active Directory tenant for the vault.
  * 
  * @member {uuid} [applicationId]  Application ID of the client making request
  * on behalf of a principal
  * 
- * @member {object} [permissions] Permissions that the principal has for this
- * vault
+ * @member {object} [permissions] Permissions the identity has for keys,
+ * secrets and certificates
  * 
- * @member {array} [permissions.keys] SKU family name
+ * @member {array} [permissions.keys] Permissions to keys
  * 
- * @member {array} [permissions.secrets] SKU name
+ * @member {array} [permissions.secrets] Permissions to secrets
+ * 
+ * @member {array} [permissions.certificates] Permissions to certificates
  * 
  */
 export interface AccessPolicyEntry {
@@ -50,14 +62,19 @@ export interface AccessPolicyEntry {
  * @class
  * Initializes a new instance of the Permissions class.
  * @constructor
- * @member {array} [keys] SKU family name
+ * Permissions the identity has for keys, secrets and certificates
+ *
+ * @member {array} [keys] Permissions to keys
  * 
- * @member {array} [secrets] SKU name
+ * @member {array} [secrets] Permissions to secrets
+ * 
+ * @member {array} [certificates] Permissions to certificates
  * 
  */
 export interface Permissions {
     keys?: string[];
     secrets?: string[];
+    certificates?: string[];
 }
 
 /**
@@ -65,32 +82,43 @@ export interface Permissions {
  * Initializes a new instance of the VaultProperties class.
  * @constructor
  * Properties of the vault
- * @member {string} [vaultUri] URL of the vault
+ *
+ * @member {string} [vaultUri] The URI of the vault for performing operations
+ * on keys and secrets.
  * 
- * @member {uuid} [tenantId] Tenant ID
+ * @member {uuid} tenantId The Azure Active Directory tenant ID that should be
+ * used for authenticating requests to the key vault.
  * 
- * @member {object} [sku] SKU details
+ * @member {object} sku SKU details
  * 
- * @member {string} [sku.family] SKU family name
+ * @member {string} [sku.family] SKU family name. Possible values include: 'A'
  * 
- * @member {string} [sku.name] SKU name
+ * @member {string} [sku.name] SKU name to specify whether the key vault is a
+ * standard vault or a premium vault. Possible values include: 'standard',
+ * 'premium'
  * 
- * @member {array} [accessPolicies] Access policies for one or more principals
+ * @member {array} accessPolicies An array of 0 to 16 identities that have
+ * access to the key vault. All identities in the array must use the same
+ * tenant ID as the key vault's tenant ID.
  * 
- * @member {boolean} [enabledForDeployment] Enabled or disabled for deployment
+ * @member {boolean} [enabledForDeployment] Property to specify whether Azure
+ * Virtual Machines are permitted to retrieve certificates stored as secrets
+ * from the key vault.
  * 
- * @member {boolean} [enabledForDiskEncryption] Enabled or disabled for disk
- * encryption
+ * @member {boolean} [enabledForDiskEncryption] Property to specify whether
+ * Azure Disk Encryption is permitted to retrieve secrets from the vault and
+ * unwrap keys.
  * 
- * @member {boolean} [enabledForTemplateDeployment] Enabled or disabled for
- * Azure Resource Manager template deployment
+ * @member {boolean} [enabledForTemplateDeployment] Property to specify
+ * whether Azure Resource Manager is permitted to retrieve secrets from the
+ * key vault.
  * 
  */
 export interface VaultProperties {
     vaultUri?: string;
-    tenantId?: string;
-    sku?: Sku;
-    accessPolicies?: AccessPolicyEntry[];
+    tenantId: string;
+    sku: Sku;
+    accessPolicies: AccessPolicyEntry[];
     enabledForDeployment?: boolean;
     enabledForDiskEncryption?: boolean;
     enabledForTemplateDeployment?: boolean;
@@ -98,22 +126,77 @@ export interface VaultProperties {
 
 /**
  * @class
+ * Initializes a new instance of the VaultCreateOrUpdateParameters class.
+ * @constructor
+ * Parameters for creating or updating a vault
+ *
+ * @member {string} location The supported Azure location where the key vault
+ * should be created.
+ * 
+ * @member {object} [tags] The tags that will be assigned to the key vault.
+ * 
+ * @member {object} properties Properties of the vault
+ * 
+ * @member {string} [properties.vaultUri] The URI of the vault for performing
+ * operations on keys and secrets.
+ * 
+ * @member {uuid} [properties.tenantId] The Azure Active Directory tenant ID
+ * that should be used for authenticating requests to the key vault.
+ * 
+ * @member {object} [properties.sku] SKU details
+ * 
+ * @member {string} [properties.sku.family] SKU family name. Possible values
+ * include: 'A'
+ * 
+ * @member {string} [properties.sku.name] SKU name to specify whether the key
+ * vault is a standard vault or a premium vault. Possible values include:
+ * 'standard', 'premium'
+ * 
+ * @member {array} [properties.accessPolicies] An array of 0 to 16 identities
+ * that have access to the key vault. All identities in the array must use
+ * the same tenant ID as the key vault's tenant ID.
+ * 
+ * @member {boolean} [properties.enabledForDeployment] Property to specify
+ * whether Azure Virtual Machines are permitted to retrieve certificates
+ * stored as secrets from the key vault.
+ * 
+ * @member {boolean} [properties.enabledForDiskEncryption] Property to specify
+ * whether Azure Disk Encryption is permitted to retrieve secrets from the
+ * vault and unwrap keys.
+ * 
+ * @member {boolean} [properties.enabledForTemplateDeployment] Property to
+ * specify whether Azure Resource Manager is permitted to retrieve secrets
+ * from the key vault.
+ * 
+ */
+export interface VaultCreateOrUpdateParameters extends BaseResource {
+    location: string;
+    tags?: { [propertyName: string]: string };
+    properties: VaultProperties;
+}
+
+/**
+ * @class
  * Initializes a new instance of the Resource class.
  * @constructor
- * @member {string} [id] Resource Id
+ * Key Vault resource
+ *
+ * @member {string} [id] The Azure Resource Manager resource ID for the key
+ * vault.
  * 
- * @member {string} [name] Resource name
+ * @member {string} name The name of the key vault.
  * 
- * @member {string} [type] Resource type
+ * @member {string} [type] The resource type of the key vault.
  * 
- * @member {string} location Resource location
+ * @member {string} location The supported Azure location where the key vault
+ * should be created.
  * 
- * @member {object} [tags] Resource tags
+ * @member {object} [tags] The tags that will be assigned to the key vault.
  * 
  */
 export interface Resource extends BaseResource {
     id?: string;
-    name?: string;
+    name: string;
     type?: string;
     location: string;
     tags?: { [propertyName: string]: string };
@@ -121,79 +204,44 @@ export interface Resource extends BaseResource {
 
 /**
  * @class
- * Initializes a new instance of the VaultCreateOrUpdateParameters class.
- * @constructor
- * Parameters to create or update a vault
- * @member {object} properties Gets or sets the properties of the vault.
- * 
- * @member {string} [properties.vaultUri] URL of the vault
- * 
- * @member {uuid} [properties.tenantId] Tenant ID
- * 
- * @member {object} [properties.sku] SKU details
- * 
- * @member {string} [properties.sku.family] SKU family name
- * 
- * @member {string} [properties.sku.name] SKU name
- * 
- * @member {array} [properties.accessPolicies] Access policies for one or more
- * principals
- * 
- * @member {boolean} [properties.enabledForDeployment] Enabled or disabled for
- * deployment
- * 
- * @member {boolean} [properties.enabledForDiskEncryption] Enabled or disabled
- * for disk encryption
- * 
- * @member {boolean} [properties.enabledForTemplateDeployment] Enabled or
- * disabled for Azure Resource Manager template deployment
- * 
- */
-export interface VaultCreateOrUpdateParameters extends Resource {
-    properties: VaultProperties;
-}
-
-/**
- * @class
  * Initializes a new instance of the Vault class.
  * @constructor
  * Resource information with extended details.
- * @member {object} [properties] Properties of the vault
+ *
+ * @member {object} properties Properties of the vault
  * 
- * @member {string} [properties.vaultUri] URL of the vault
+ * @member {string} [properties.vaultUri] The URI of the vault for performing
+ * operations on keys and secrets.
  * 
- * @member {uuid} [properties.tenantId] Tenant ID
+ * @member {uuid} [properties.tenantId] The Azure Active Directory tenant ID
+ * that should be used for authenticating requests to the key vault.
  * 
  * @member {object} [properties.sku] SKU details
  * 
- * @member {string} [properties.sku.family] SKU family name
+ * @member {string} [properties.sku.family] SKU family name. Possible values
+ * include: 'A'
  * 
- * @member {string} [properties.sku.name] SKU name
+ * @member {string} [properties.sku.name] SKU name to specify whether the key
+ * vault is a standard vault or a premium vault. Possible values include:
+ * 'standard', 'premium'
  * 
- * @member {array} [properties.accessPolicies] Access policies for one or more
- * principals
+ * @member {array} [properties.accessPolicies] An array of 0 to 16 identities
+ * that have access to the key vault. All identities in the array must use
+ * the same tenant ID as the key vault's tenant ID.
  * 
- * @member {boolean} [properties.enabledForDeployment] Enabled or disabled for
- * deployment
+ * @member {boolean} [properties.enabledForDeployment] Property to specify
+ * whether Azure Virtual Machines are permitted to retrieve certificates
+ * stored as secrets from the key vault.
  * 
- * @member {boolean} [properties.enabledForDiskEncryption] Enabled or disabled
- * for disk encryption
+ * @member {boolean} [properties.enabledForDiskEncryption] Property to specify
+ * whether Azure Disk Encryption is permitted to retrieve secrets from the
+ * vault and unwrap keys.
  * 
- * @member {boolean} [properties.enabledForTemplateDeployment] Enabled or
- * disabled for Azure Resource Manager template deployment
+ * @member {boolean} [properties.enabledForTemplateDeployment] Property to
+ * specify whether Azure Resource Manager is permitted to retrieve secrets
+ * from the key vault.
  * 
  */
 export interface Vault extends Resource {
-    properties?: VaultProperties;
-}
-
-/**
- * @class
- * Initializes a new instance of the SubResource class.
- * @constructor
- * @member {string} [id] Resource Id
- * 
- */
-export interface SubResource extends BaseResource {
-    id?: string;
+    properties: VaultProperties;
 }

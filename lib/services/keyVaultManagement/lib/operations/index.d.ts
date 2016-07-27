@@ -17,7 +17,7 @@ import * as models from '../models';
 export interface Vaults {
 
     /**
-     * Creates a new Azure key vault.
+     * Create or update a key vault in the specified subscription.
      *
      * @param {string} resourceGroupName The name of the Resource Group to which
      * the server belongs.
@@ -26,34 +26,44 @@ export interface Vaults {
      * 
      * @param {object} parameters Parameters to create or update the vault
      * 
-     * @param {object} [parameters.properties] Gets or sets the properties of the
+     * @param {string} parameters.location The supported Azure location where the
+     * key vault should be created.
+     * 
+     * @param {object} [parameters.tags] The tags that will be assigned to the key
      * vault.
      * 
-     * @param {string} [parameters.properties.vaultUri] URL of the vault
+     * @param {object} parameters.properties Properties of the vault
      * 
-     * @param {uuid} [parameters.properties.tenantId] Tenant ID
+     * @param {string} [parameters.properties.vaultUri] The URI of the vault for
+     * performing operations on keys and secrets.
      * 
-     * @param {object} [parameters.properties.sku] SKU details
+     * @param {uuid} parameters.properties.tenantId The Azure Active Directory
+     * tenant ID that should be used for authenticating requests to the key vault.
      * 
-     * @param {string} [parameters.properties.sku.family] SKU family name
+     * @param {object} parameters.properties.sku SKU details
      * 
-     * @param {string} [parameters.properties.sku.name] SKU name
+     * @param {string} [parameters.properties.sku.family] SKU family name.
+     * Possible values include: 'A'
      * 
-     * @param {array} [parameters.properties.accessPolicies] Access policies for
-     * one or more principals
+     * @param {string} parameters.properties.sku.name SKU name to specify whether
+     * the key vault is a standard vault or a premium vault. Possible values
+     * include: 'standard', 'premium'
      * 
-     * @param {boolean} [parameters.properties.enabledForDeployment] Enabled or
-     * disabled for deployment
+     * @param {array} parameters.properties.accessPolicies An array of 0 to 16
+     * identities that have access to the key vault. All identities in the array
+     * must use the same tenant ID as the key vault's tenant ID.
      * 
-     * @param {boolean} [parameters.properties.enabledForDiskEncryption] Enabled
-     * or disabled for disk encryption
+     * @param {boolean} [parameters.properties.enabledForDeployment] Property to
+     * specify whether Azure Virtual Machines are permitted to retrieve
+     * certificates stored as secrets from the key vault.
+     * 
+     * @param {boolean} [parameters.properties.enabledForDiskEncryption] Property
+     * to specify whether Azure Disk Encryption is permitted to retrieve secrets
+     * from the vault and unwrap keys.
      * 
      * @param {boolean} [parameters.properties.enabledForTemplateDeployment]
-     * Enabled or disabled for Azure Resource Manager template deployment
-     * 
-     * @param {string} [parameters.location] Resource location
-     * 
-     * @param {object} [parameters.tags] Resource tags
+     * Property to specify whether Azure Resource Manager is permitted to
+     * retrieve secrets from the key vault.
      * 
      * @param {object} [options] Optional Parameters.
      * 
@@ -82,8 +92,8 @@ export interface Vaults {
      * @param {ServiceCallback} [callback] callback function; see ServiceCallback
      * doc in ms-rest index.d.ts for details
      */
-    deleteMethod(resourceGroupName: string, vaultName: string, options: { customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.Vault>): void;
-    deleteMethod(resourceGroupName: string, vaultName: string, callback: ServiceCallback<models.Vault>): void;
+    deleteMethod(resourceGroupName: string, vaultName: string, options: { customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<void>): void;
+    deleteMethod(resourceGroupName: string, vaultName: string, callback: ServiceCallback<void>): void;
 
     /**
      * Gets the specified Azure key vault.
@@ -111,9 +121,9 @@ export interface Vaults {
      * @param {string} resourceGroupName The name of the Resource Group to which
      * the vault belongs.
      * 
-     * @param {number} top Maximum number of results to return.
-     * 
      * @param {object} [options] Optional Parameters.
+     * 
+     * @param {number} [options.top] Maximum number of results to return.
      * 
      * @param {object} [options.customHeaders] Headers that will be added to the
      * request
@@ -121,16 +131,16 @@ export interface Vaults {
      * @param {ServiceCallback} [callback] callback function; see ServiceCallback
      * doc in ms-rest index.d.ts for details
      */
-    list(resourceGroupName: string, top: number, options: { customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.VaultListResult>): void;
-    list(resourceGroupName: string, top: number, callback: ServiceCallback<models.VaultListResult>): void;
+    listByResourceGroup(resourceGroupName: string, options: { top? : number, customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.VaultListResult>): void;
+    listByResourceGroup(resourceGroupName: string, callback: ServiceCallback<models.VaultListResult>): void;
 
     /**
      * The List operation gets information about the vaults associated with the
      * subscription.
      *
-     * @param {number} top Maximum number of results to return.
-     * 
      * @param {object} [options] Optional Parameters.
+     * 
+     * @param {number} [options.top] Maximum number of results to return.
      * 
      * @param {object} [options.customHeaders] Headers that will be added to the
      * request
@@ -138,8 +148,8 @@ export interface Vaults {
      * @param {ServiceCallback} [callback] callback function; see ServiceCallback
      * doc in ms-rest index.d.ts for details
      */
-    listAll(top: number, options: { customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.VaultListResult>): void;
-    listAll(top: number, callback: ServiceCallback<models.VaultListResult>): void;
+    list(options: { top? : number, customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.VaultListResult>): void;
+    list(callback: ServiceCallback<models.VaultListResult>): void;
 
     /**
      * The List operation gets information about the vaults associated with the
@@ -156,8 +166,8 @@ export interface Vaults {
      * @param {ServiceCallback} [callback] callback function; see ServiceCallback
      * doc in ms-rest index.d.ts for details
      */
-    listNext(nextPageLink: string, options: { customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.VaultListResult>): void;
-    listNext(nextPageLink: string, callback: ServiceCallback<models.VaultListResult>): void;
+    listByResourceGroupNext(nextPageLink: string, options: { customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.VaultListResult>): void;
+    listByResourceGroupNext(nextPageLink: string, callback: ServiceCallback<models.VaultListResult>): void;
 
     /**
      * The List operation gets information about the vaults associated with the
@@ -174,6 +184,6 @@ export interface Vaults {
      * @param {ServiceCallback} [callback] callback function; see ServiceCallback
      * doc in ms-rest index.d.ts for details
      */
-    listAllNext(nextPageLink: string, options: { customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.VaultListResult>): void;
-    listAllNext(nextPageLink: string, callback: ServiceCallback<models.VaultListResult>): void;
+    listNext(nextPageLink: string, options: { customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.VaultListResult>): void;
+    listNext(nextPageLink: string, callback: ServiceCallback<models.VaultListResult>): void;
 }
