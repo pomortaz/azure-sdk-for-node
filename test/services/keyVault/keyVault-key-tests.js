@@ -581,7 +581,7 @@ describe('Key Vault keys', function () {
                     if (err) throw err;
                     keyId = KeyVault.parseKeyIdentifier(keyBundle.key.kid);
                     next();
-                })
+                });
             }
             
             function signWOVersion(next) {

@@ -53,12 +53,12 @@ declare class KeyVaultClient {
          * 
          * @param {string} keyName The name of the key
          * 
-         * @param {string} kty The type of key to create. For valid key types, see
-         * WebKeyTypes.
+         * @param {string} kty The type of key to create. Valid key types, see
+         * JsonWebKeyType. Possible values include: 'EC', 'RSA', 'RSA-HSM', 'oct'
          * 
          * @param {object} [options] Optional Parameters.
          * 
-         * @param {number} [options.keySize] Size of the key
+         * @param {number} [options.keySize] The key size in bytes. e.g. 1024 or 2048.
          * 
          * @param {array} [options.keyOps]
          * 
@@ -95,7 +95,8 @@ declare class KeyVaultClient {
          * 
          * @param {string} [key.kid] Key Identifier
          * 
-         * @param {string} [key.kty] Key type, usually RSA
+         * @param {string} [key.kty] Key type, usually RSA. Possible values include:
+         * 'EC', 'RSA', 'RSA-HSM', 'oct'
          * 
          * @param {array} [key.keyOps]
          * 
@@ -300,8 +301,8 @@ declare class KeyVaultClient {
         restoreKey(vaultBaseUrl: string, keyBundleBackup: Buffer, callback: ServiceCallback<models.KeyBundle>): void;
 
         /**
-         * Encrypts a single block of data. The amount of data that may be encrypted
-         * is determined
+         * Encrypts an arbitrary sequence of bytes using an encryption key that is
+         * stored in Azure Key Vault.
          *
          * @param {string} vaultBaseUrl The vault name, e.g.
          * https://myvault.vault.azure.net
@@ -310,7 +311,8 @@ declare class KeyVaultClient {
          * 
          * @param {string} keyVersion The version of the key
          * 
-         * @param {string} algorithm algorithm identifier
+         * @param {string} algorithm algorithm identifier. Possible values include:
+         * 'RSA-OAEP', 'RSA1_5'
          * 
          * @param {buffer} value
          * 
@@ -335,7 +337,8 @@ declare class KeyVaultClient {
          * 
          * @param {string} keyVersion The version of the key
          * 
-         * @param {string} algorithm algorithm identifier
+         * @param {string} algorithm algorithm identifier. Possible values include:
+         * 'RSA-OAEP', 'RSA1_5'
          * 
          * @param {buffer} value
          * 
@@ -360,7 +363,10 @@ declare class KeyVaultClient {
          * 
          * @param {string} keyVersion The version of the key
          * 
-         * @param {string} algorithm algorithm identifier
+         * @param {string} algorithm The signing/verification algorithm identifier.
+         * For more information on possible algorithm types, see
+         * JsonWebKeySignatureAlgorithm. Possible values include: 'RS256', 'RS384',
+         * 'RS512', 'RSNULL'
          * 
          * @param {buffer} value
          * 
@@ -387,6 +393,7 @@ declare class KeyVaultClient {
          * 
          * @param {string} algorithm The signing/verification algorithm. For more
          * information on possible algorithm types, see JsonWebKeySignatureAlgorithm.
+         * Possible values include: 'RS256', 'RS384', 'RS512', 'RSNULL'
          * 
          * @param {buffer} digest The digest used for signing
          * 
@@ -413,7 +420,8 @@ declare class KeyVaultClient {
          * 
          * @param {string} keyVersion The version of the key
          * 
-         * @param {string} algorithm algorithm identifier
+         * @param {string} algorithm algorithm identifier. Possible values include:
+         * 'RSA-OAEP', 'RSA1_5'
          * 
          * @param {buffer} value
          * 
@@ -439,7 +447,8 @@ declare class KeyVaultClient {
          * 
          * @param {string} keyVersion The version of the key
          * 
-         * @param {string} algorithm algorithm identifier
+         * @param {string} algorithm algorithm identifier. Possible values include:
+         * 'RSA-OAEP', 'RSA1_5'
          * 
          * @param {buffer} value
          * 
@@ -721,7 +730,7 @@ declare class KeyVaultClient {
         getCertificateIssuers(vaultBaseUrl: string, callback: ServiceCallback<models.CertificateIssuerListResult>): void;
 
         /**
-         * Sets the certificate contacts for the specified vault.
+         * Sets the specified certificate issuer.
          *
          * @param {string} vaultBaseUrl The vault name, e.g.
          * https://myvault.vault.azure.net
@@ -872,7 +881,7 @@ declare class KeyVaultClient {
          * type.
          * 
          * @param {number} [options.certificatePolicy.keyProperties.keySize] The key
-         * size.
+         * size in bytes. e.g. 1024 or 2048.
          * 
          * @param {boolean} [options.certificatePolicy.keyProperties.reuseKey]
          * Indicates if the same key pair will be used on certificate renewal.
@@ -982,7 +991,7 @@ declare class KeyVaultClient {
          * type.
          * 
          * @param {number} [options.certificatePolicy.keyProperties.keySize] The key
-         * size.
+         * size in bytes. e.g. 1024 or 2048.
          * 
          * @param {boolean} [options.certificatePolicy.keyProperties.reuseKey]
          * Indicates if the same key pair will be used on certificate renewal.
@@ -1123,7 +1132,8 @@ declare class KeyVaultClient {
          * 
          * @param {string} [certificatePolicy.keyProperties.keyType] The key type.
          * 
-         * @param {number} [certificatePolicy.keyProperties.keySize] The key size.
+         * @param {number} [certificatePolicy.keyProperties.keySize] The key size in
+         * bytes. e.g. 1024 or 2048.
          * 
          * @param {boolean} [certificatePolicy.keyProperties.reuseKey] Indicates if
          * the same key pair will be used on certificate renewal.

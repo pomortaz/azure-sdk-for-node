@@ -39,7 +39,8 @@ export interface Attributes {
  *
  * @member {string} [kid] Key Identifier
  * 
- * @member {string} [kty] Key type, usually RSA
+ * @member {string} [kty] Key type, usually RSA. Possible values include:
+ * 'EC', 'RSA', 'RSA-HSM', 'oct'
  * 
  * @member {array} [keyOps]
  * 
@@ -100,7 +101,8 @@ export interface KeyAttributes extends Attributes {
  * 
  * @member {string} [key.kid] Key Identifier
  * 
- * @member {string} [key.kty] Key type, usually RSA
+ * @member {string} [key.kty] Key type, usually RSA. Possible values include:
+ * 'EC', 'RSA', 'RSA-HSM', 'oct'
  * 
  * @member {array} [key.keyOps]
  * 
@@ -173,6 +175,8 @@ export interface KeyItem {
  * @member {object} [tags] Application-specific metadata in the form of
  * key-value pairs
  * 
+ * @member {string} [kid] The key id for certificate.
+ * 
  */
 export interface SecretBundle {
     value?: string;
@@ -180,6 +184,7 @@ export interface SecretBundle {
     contentType?: string;
     attributes?: SecretAttributes;
     tags?: { [propertyName: string]: string };
+    kid?: string;
 }
 
 /**
@@ -238,14 +243,14 @@ export interface CertificateAttributes extends Attributes {
  * @member {object} [tags] Application-specific metadata in the form of
  * key-value pairs
  * 
- * @member {buffer} [x5T] Thumbprint of the certificate.
+ * @member {buffer} [x509Thumbprint] Thumbprint of the certificate.
  * 
  */
 export interface CertificateItem {
     id?: string;
     attributes?: CertificateAttributes;
     tags?: { [propertyName: string]: string };
-    x5T?: Buffer;
+    x509Thumbprint?: Buffer;
 }
 
 /**
@@ -276,7 +281,7 @@ export interface CertificateIssuerItem {
  * 
  * @member {string} [sid] The secret id
  * 
- * @member {buffer} [x5t] Thumbprint of the certificate.
+ * @member {buffer} [x509Thumbprint] Thumbprint of the certificate.
  * 
  * @member {object} [policy] The management policy.
  * 
@@ -290,7 +295,8 @@ export interface CertificateIssuerItem {
  * 
  * @member {string} [policy.keyProperties.keyType] The key type.
  * 
- * @member {number} [policy.keyProperties.keySize] The key size.
+ * @member {number} [policy.keyProperties.keySize] The key size in bytes. e.g.
+ * 1024 or 2048.
  * 
  * @member {boolean} [policy.keyProperties.reuseKey] Indicates if the same key
  * pair will be used on certificate renewal.
@@ -356,7 +362,7 @@ export interface CertificateBundle {
     id?: string;
     kid?: string;
     sid?: string;
-    x5t?: Buffer;
+    x509Thumbprint?: Buffer;
     policy?: CertificatePolicy;
     cer?: Buffer;
     contentType?: string;
@@ -380,7 +386,8 @@ export interface CertificateBundle {
  * 
  * @member {string} [keyProperties.keyType] The key type.
  * 
- * @member {number} [keyProperties.keySize] The key size.
+ * @member {number} [keyProperties.keySize] The key size in bytes. e.g. 1024
+ * or 2048.
  * 
  * @member {boolean} [keyProperties.reuseKey] Indicates if the same key pair
  * will be used on certificate renewal.
@@ -447,7 +454,7 @@ export interface CertificatePolicy {
  * 
  * @member {string} [keyType] The key type.
  * 
- * @member {number} [keySize] The key size.
+ * @member {number} [keySize] The key size in bytes. e.g. 1024 or 2048.
  * 
  * @member {boolean} [reuseKey] Indicates if the same key pair will be used on
  * certificate renewal.
@@ -816,10 +823,10 @@ export interface Contact {
  * @constructor
  * The key create parameters
  *
- * @member {string} kty The type of key to create. For valid key types, see
- * WebKeyTypes.
+ * @member {string} kty The type of key to create. Valid key types, see
+ * JsonWebKeyType. Possible values include: 'EC', 'RSA', 'RSA-HSM', 'oct'
  * 
- * @member {number} [keySize] Size of the key
+ * @member {number} [keySize] The key size in bytes. e.g. 1024 or 2048.
  * 
  * @member {array} [keyOps]
  * 
@@ -850,7 +857,8 @@ export interface KeyCreateParameters {
  * 
  * @member {string} [key.kid] Key Identifier
  * 
- * @member {string} [key.kty] Key type, usually RSA
+ * @member {string} [key.kty] Key type, usually RSA. Possible values include:
+ * 'EC', 'RSA', 'RSA-HSM', 'oct'
  * 
  * @member {array} [key.keyOps]
  * 
@@ -893,12 +901,32 @@ export interface KeyImportParameters {
  * @constructor
  * The key operations parameters
  *
- * @member {string} algorithm algorithm identifier
+ * @member {string} algorithm algorithm identifier. Possible values include:
+ * 'RSA-OAEP', 'RSA1_5'
  * 
  * @member {buffer} value
  * 
  */
 export interface KeyOperationsParameters {
+    algorithm: string;
+    value: Buffer;
+}
+
+/**
+ * @class
+ * Initializes a new instance of the KeySignParameters class.
+ * @constructor
+ * The key operations parameters
+ *
+ * @member {string} algorithm The signing/verification algorithm identifier.
+ * For more information on possible algorithm types, see
+ * JsonWebKeySignatureAlgorithm. Possible values include: 'RS256', 'RS384',
+ * 'RS512', 'RSNULL'
+ * 
+ * @member {buffer} value
+ * 
+ */
+export interface KeySignParameters {
     algorithm: string;
     value: Buffer;
 }
@@ -911,6 +939,7 @@ export interface KeyOperationsParameters {
  *
  * @member {string} algorithm The signing/verification algorithm. For more
  * information on possible algorithm types, see JsonWebKeySignatureAlgorithm.
+ * Possible values include: 'RS256', 'RS384', 'RS512', 'RSNULL'
  * 
  * @member {buffer} digest The digest used for signing
  * 
@@ -1020,7 +1049,8 @@ export interface SecretUpdateParameters {
  * 
  * @member {string} [certificatePolicy.keyProperties.keyType] The key type.
  * 
- * @member {number} [certificatePolicy.keyProperties.keySize] The key size.
+ * @member {number} [certificatePolicy.keyProperties.keySize] The key size in
+ * bytes. e.g. 1024 or 2048.
  * 
  * @member {boolean} [certificatePolicy.keyProperties.reuseKey] Indicates if
  * the same key pair will be used on certificate renewal.
@@ -1113,7 +1143,8 @@ export interface CertificateCreateParameters {
  * 
  * @member {string} [certificatePolicy.keyProperties.keyType] The key type.
  * 
- * @member {number} [certificatePolicy.keyProperties.keySize] The key size.
+ * @member {number} [certificatePolicy.keyProperties.keySize] The key size in
+ * bytes. e.g. 1024 or 2048.
  * 
  * @member {boolean} [certificatePolicy.keyProperties.reuseKey] Indicates if
  * the same key pair will be used on certificate renewal.

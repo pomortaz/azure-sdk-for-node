@@ -269,7 +269,7 @@ exports.validateCertificateBundle = function (bundle, vault, certificateName, po
     should(identifier.name).be.exactly(certificateName);
 
     should.exist(bundle);
-    should.exist(bundle.x5t);
+    should.exist(bundle.x509Thumbprint);
     should.exist(bundle.policy);
     should.exist(bundle.cer);
     should.exist(bundle.attributes);
