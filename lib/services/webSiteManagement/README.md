@@ -1,8 +1,8 @@
 # Microsoft Azure SDK for Node.js - Web Site Management
 
 This project provides a Node.js package that makes it easy to manage Microsoft Azure Web Site. Right now it supports:
-- **Node.js version: 0.6.15 or higher**
-- **API version: 2013-08-01**
+- **Node.js version: 4.x or higher**
+- **API version: 2014-04-01**
 
 ## Features
 
@@ -32,7 +32,7 @@ This library support management certificate authentication. To authenticate the 
 var fs                = require('fs'),
     webSiteManagement = require('azure-asm-website');
 
-var webSiteManagementClient = webSiteManagement.createWebsiteManagementClient(webSiteManagement.createCertificateCloudCredentials({
+var webSiteManagementClient = webSiteManagement.createWebSiteManagementClient(webSiteManagement.createCertificateCloudCredentials({
   subscriptionId: '<your subscription id>',
   pem: fs.readFileSync('<your pem file>')
 }));

@@ -7,7 +7,7 @@
     "Tavares, Chris <ctavares@microsoft.com>",
     "Mkrtchyan, Hovsep <hovsepm@microsoft.com>"
   ],
-  "version": "0.1.10",
+  "version": "0.2.12",
   "description": "Microsoft Azure Client Library in node for miscellaneous items",
   "tags": [
     "azure",
@@ -18,9 +18,6 @@
     "azure"
   ],
   "main": "./lib/graphRbac.js",
-  "engines": {
-    "node": ">= 0.6.15"
-  },
   "licenses": [
     {
       "type": "Apache 2.0",
