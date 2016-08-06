@@ -32,7 +32,7 @@ var random = KvUtils.getRandom();
 
 var vaultUri = process.env['AZURE_KV_VAULT'];
 if (!vaultUri) {
-    vaultUri = 'https://nodesdktest.vault.azure.net';
+  vaultUri = 'https://sdktestvault0511.vault.azure.net';
 }
 
 var SECRET_NAME = 'nodeSecret';
@@ -40,321 +40,321 @@ var SECRET_VALUE = 'Pa$$w0rd';
 var LIST_TEST_SIZE = 2;
 
 describe('Key Vault secrets', function () {
+  
+  var client;
+  var suiteUtil;
+  
+  before(function (done) {
+    var credentials = new KeyVault.KeyVaultCredentials(KvUtils.authenticator);
+    client = new KeyVault.KeyVaultClient(credentials);
     
-    var client;
-    var suiteUtil;
-    
-    before(function (done) {
-        var credentials = new KeyVault.KeyVaultCredentials(KvUtils.authenticator);
-        client = new KeyVault.KeyVaultClient(credentials);
-        
-        suiteUtil = new MockedTestUtils(client, 'keyVault-secret-tests');
-        suiteUtil.setupSuite(done);
+    suiteUtil = new MockedTestUtils(client, 'keyVault-secret-tests');
+    suiteUtil.setupSuite(done);
+  });
+  
+  after(function (done) {
+    cleanupCreatedSecrets(function () {
+      suiteUtil.teardownSuite(done);
     });
-    
-    after(function (done) {
-        cleanupCreatedSecrets(function () {
-            suiteUtil.teardownSuite(done);
-        });
-    });
-    
-    beforeEach(function (done) {
-        suiteUtil.setupTest(done);
-    });
-    
-    afterEach(function (done) {
-        suiteUtil.baseTeardownTest(done);
-    });
-    
-    describe('identifier', function () {
-        it('should work', function (done) {
-            
-            function assertMatch(vault, name, version, secretId) {
-                assertExactly(util.format('%s/secrets/%s', vault, name), secretId.baseIdentifier);
-                if (version) {
-                    assertExactly(util.format('%s/secrets/%s/%s', vault, name, version), secretId.identifier);
-                } else {
-                    assertExactly(secretId.baseIdentifier, secretId.identifier);
-                }
-                assertExactly(vault, secretId.vault);
-                assertExactly(name, secretId.name);
-                assertExactly(version, secretId.version);
-            }
-            
-            function verifyCreate(vault, name, version) {
-                var secretId, parsedId;
-                if (version) {
-                    secretId = KeyVault.createSecretIdentifier(vault, name, version);
-                } else {
-                    secretId = KeyVault.createSecretIdentifier(vault, name);
-                }
-                assertMatch(vault, name, version, secretId);
-                if (version) {
-                    parsedId = KeyVault.parseSecretIdentifier(secretId.identifier);
-                    assertMatch(vault, name, version, parsedId);
-                }
-                parsedId = KeyVault.parseSecretIdentifier(secretId.baseIdentifier);
-                assertMatch(vault, name, null, parsedId);
-            }
-            
-            verifyCreate(vaultUri, SECRET_NAME, null);
-            verifyCreate(vaultUri, SECRET_NAME, '1234');
-            
-            done();
+  });
+  
+  beforeEach(function (done) {
+    suiteUtil.setupTest(done);
+  });
+  
+  afterEach(function (done) {
+    suiteUtil.baseTeardownTest(done);
+  });
+  
+  describe('identifier', function () {
+    it('should work', function (done) {
       
-        });
-    });
-    
-    describe('CRUD operations', function () {
-        it('should work', function (done) {
-            
-            this.timeout(10000);
-            
-            var createdBundle;
-            var secretId;
-            
-            function createSecret(next) {
-                client.setSecret(vaultUri, SECRET_NAME, SECRET_VALUE, function (err, secretBundle) {
-                    if (err) throw err;
-                    validateSecretBundle(secretBundle, vaultUri, SECRET_NAME, SECRET_VALUE);
-                    createdBundle = secretBundle;
-                    secretId = KeyVault.parseSecretIdentifier(createdBundle.id);
-                    next();
-                });
-            }
-            
-            function getSecretWOVersion(next) {
-                client.getSecret(secretId.baseIdentifier, function (err, secretBundle) {
-                    if (err) throw err;
-                    compareObjects(createdBundle, secretBundle);
-                    next();
-                });
-            }
-            
-            function getSecretWithVersion(next) {
-                client.getSecret(secretId.identifier, function (err, secretBundle) {
-                    if (err) throw err;
-                    compareObjects(createdBundle, secretBundle);
-                    next();
-                });
-            }
-            
-            function updateSecret(secretUri, next) {
-                var updatingBundle = KvUtils.clone(createdBundle);
-                updatingBundle.contentType = 'text/plain';
-                updatingBundle.attributes.expires = new Date('2050-02-02T08:00:00.000Z');
-                updatingBundle.tags = { foo: random.hex(100) };
-                var request = { contentType: updatingBundle.contentType, secretAttributes: updatingBundle.attributes, tags: updatingBundle.tags };
-                client.updateSecret(secretUri, request, function (err, secretBundle) {
-                    if (err) throw err;
-                    delete updatingBundle.value;
-                    updatingBundle.attributes.updated = secretBundle.attributes.updated;
-                    compareObjects(updatingBundle, secretBundle);
-                    createdBundle = secretBundle;
-                    next();
-                });
-            }
-            
-            function updateSecretWOVersion(next) {
-                return updateSecret(secretId.baseIdentifier, next);
-            }
-            
-            function updateSecretWithVersion(next) {
-                return updateSecret(secretId.identifier, next);
-            }
-            
-            function deleteSecret(next) {
-                client.deleteSecret(secretId.vault, secretId.name, function (err, secretBundle) {
-                    if (err) throw err;
-                    compareObjects(createdBundle, secretBundle);
-                    next();
-                });
-            }
-            
-            function getSecretReturnsNotFound(next) {
-                client.getSecret(secretId.baseIdentifier, function (err, secretBundle) {
-                    if (!err || !err.code || err.code !== 'SecretNotFound' || !err.statusCode || err.statusCode !== 404) throw new Error('Unexpected error object: ' + JSON.stringify(err, null, ' '));
-                    next();
-                });
-            }
-            
-            series([
-                createSecret,
-                getSecretWOVersion,
-                getSecretWithVersion,
-                updateSecretWOVersion,
-                updateSecretWithVersion,
-                deleteSecret,
-                getSecretReturnsNotFound,
-                function () { done(); }
-            ]);
-      
-        });
-    });
-    
-    describe('list', function () {
-        it('should work', function (done) {
-            
-            this.timeout(100000);
-            
-            var maxSecrets = LIST_TEST_SIZE;
-            var expected = {};
-            var zeroCount = Object.keys(expected).length;
-            
-            function createManySecrets(next) {
-                
-                var secretCount = 0;
-                var errorCount = 0;
-                
-                function createASecret() {
-                    client.setSecret(vaultUri, SECRET_NAME + (secretCount + 1), SECRET_VALUE, function (err, secretBundle) {
-                        if (err && err.code == 'Throttled') {
-                            ++errorCount;
-                            return setTimeout(createASecret, errorCount * 2500);
-                        }
-                        if (err) throw err;
-                        errorCount = 0;
-                        var secretId = KeyVault.parseSecretIdentifier(secretBundle.id).baseIdentifier;
-                        expected[secretId] = secretBundle.attributes;
-                        ++secretCount;
-                        if (secretCount < maxSecrets) {
-                            return createASecret();
-                        }
-                        next();
-                    });
-                }
-                
-                createASecret();
-            }
-            
-            function listSecrets(next) {
-                var currentResult;
-                client.getSecrets(vaultUri, { maxresults: LIST_TEST_SIZE }, function (err, result) {
-                    if (err) throw err;
-                    should(result.length).be.within(0, LIST_TEST_SIZE);
-                    validateSecretList(result, expected);
-                    currentResult = result;
-                    if (currentResult.nextLink) {
-                        return getNextSecrets(currentResult.nextLink);
-                    }
-                    next();
-                    
-                    function getNextSecrets(nextLink) {
-                        client.getSecretsNext(nextLink, function (err, list) {
-                            if (err) throw err;
-                            validateSecretList(list, expected);
-                            if (list.nextLink) {
-                                return getNextSecrets(list.nextLink);
-                            }
-                            if (Object.keys(expected).length !== zeroCount) {
-                                throw new Error('Not all secrets were returned: ' + JSON.stringify(Object.keys(expected), null, ' '));
-                            }
-                            next();
-                        });
-                    }
-          
-                });
-            }
-            
-            series([
-                createManySecrets,
-                listSecrets,
-                function () {
-                    done();
-                }
-            ]);
-
-        });
-    });
-    
-    describe('list versions', function () {
-        it('should work', function (done) {
-            
-            this.timeout(10000);
-            
-            
-            var maxSecrets = LIST_TEST_SIZE;
-            var expected = {};
-            var zeroCount = Object.keys(expected).length;
-            
-            function createManySecretVersions(next) {
-                
-                var secretCount = 0;
-                var errorCount = 0;
-                
-                function createASecret() {
-                    client.setSecret(vaultUri, SECRET_NAME, SECRET_VALUE, function (err, secretBundle) {
-                        if (err && err.code == 'Throttled') {
-                            ++errorCount;
-                            return setTimeout(createASecret, errorCount * 2500);
-                        }
-                        if (err) throw err;
-                        errorCount = 0;
-                        expected[secretBundle.id] = secretBundle.attributes;
-                        ++secretCount;
-                        if (secretCount < maxSecrets) {
-                            return createASecret();
-                        }
-                        next();
-                    });
-                }
-                
-                createASecret();
-            }
-            
-            function listSecretVersions(next) {
-                var currentResult;
-                client.getSecretVersions(vaultUri, SECRET_NAME, function (err, result) {
-                    if (err) throw err;
-                    validateSecretList(result, expected);
-                    currentResult = result;
-                    if (currentResult.nextLink) {
-                        return getNextSecrets(currentResult.nextLink);
-                    }
-                    next();
-                    
-                    function getNextSecrets(nextList) {
-                        client.getSecretVersionsNext(nextList, function (err, list) {
-                            if (err) throw err;
-                            validateSecretList(list, expected);
-                            if (list.nextLink) {
-                                return getNextSecrets(list.nextLink);
-                            }
-                            if (Object.keys(expected).length !== zeroCount) {
-                                throw new Error('Not all secrets were returned: ' + JSON.stringify(Object.keys(expected), null, ' '));
-                            }
-                            next();
-                        });
-                    }
-          
-                });
-            }
-            
-            series([
-                createManySecretVersions,
-                listSecretVersions,
-                function () {
-                    done();
-                }
-            ]);
-
-        });
-    });
-    
-    function cleanupCreatedSecrets(callback) {
-
-        if (!suiteUtil.isMocked) {
-            client.getSecrets(vaultUri, function (err, list) {
-                if (list && list.length !== 0) {
-                    list.forEach(function (secret) {
-                        var id = KeyVault.parseSecretIdentifier(secret.id);
-                        client.deleteSecret(id.vault, id.name, function (err, bundle) { });
-                    });
-                }
-                callback();
-            });
+      function assertMatch(vault, name, version, secretId) {
+        assertExactly(util.format('%s/secrets/%s', vault, name), secretId.baseIdentifier);
+        if (version) {
+          assertExactly(util.format('%s/secrets/%s/%s', vault, name, version), secretId.identifier);
+        } else {
+          assertExactly(secretId.baseIdentifier, secretId.identifier);
         }
-        else callback();
+        assertExactly(vault, secretId.vault);
+        assertExactly(name, secretId.name);
+        assertExactly(version, secretId.version);
+      }
+      
+      function verifyCreate(vault, name, version) {
+        var secretId, parsedId;
+        if (version) {
+          secretId = KeyVault.createSecretIdentifier(vault, name, version);
+        } else {
+          secretId = KeyVault.createSecretIdentifier(vault, name);
+        }
+        assertMatch(vault, name, version, secretId);
+        if (version) {
+          parsedId = KeyVault.parseSecretIdentifier(secretId.identifier);
+          assertMatch(vault, name, version, parsedId);
+        }
+        parsedId = KeyVault.parseSecretIdentifier(secretId.baseIdentifier);
+        assertMatch(vault, name, null, parsedId);
+      }
+      
+      verifyCreate(vaultUri, SECRET_NAME, null);
+      verifyCreate(vaultUri, SECRET_NAME, '1234');
+      
+      done();
+      
+    });
+  });
+  
+  describe('CRUD operations', function () {
+    it('should work', function (done) {
+      
+      this.timeout(10000);
+      
+      var createdBundle;
+      var secretId;
+      
+      function createSecret(next) {
+        client.setSecret(vaultUri, SECRET_NAME, SECRET_VALUE, function (err, secretBundle) {
+          if (err) throw err;
+          validateSecretBundle(secretBundle, vaultUri, SECRET_NAME, SECRET_VALUE);
+          createdBundle = secretBundle;
+          secretId = KeyVault.parseSecretIdentifier(createdBundle.id);
+          next();
+        });
+      }
+      
+      function getSecretWOVersion(next) {
+        client.getSecret(secretId.baseIdentifier, function (err, secretBundle) {
+          if (err) throw err;
+          compareObjects(createdBundle, secretBundle);
+          next();
+        });
+      }
+      
+      function getSecretWithVersion(next) {
+        client.getSecret(secretId.identifier, function (err, secretBundle) {
+          if (err) throw err;
+          compareObjects(createdBundle, secretBundle);
+          next();
+        });
+      }
+      
+      function updateSecret(secretUri, next) {
+        var updatingBundle = KvUtils.clone(createdBundle);
+        updatingBundle.contentType = 'text/plain';
+        updatingBundle.attributes.expires = new Date('2050-02-02T08:00:00.000Z');
+        updatingBundle.tags = { foo: random.hex(100) };
+        var request = { contentType: updatingBundle.contentType, secretAttributes: updatingBundle.attributes, tags: updatingBundle.tags };
+        client.updateSecret(secretUri, request, function (err, secretBundle) {
+          if (err) throw err;
+          delete updatingBundle.value;
+          updatingBundle.attributes.updated = secretBundle.attributes.updated;
+          compareObjects(updatingBundle, secretBundle);
+          createdBundle = secretBundle;
+          next();
+        });
+      }
+      
+      function updateSecretWOVersion(next) {
+        return updateSecret(secretId.baseIdentifier, next);
+      }
+      
+      function updateSecretWithVersion(next) {
+        return updateSecret(secretId.identifier, next);
+      }
+      
+      function deleteSecret(next) {
+        client.deleteSecret(secretId.vault, secretId.name, function (err, secretBundle) {
+          if (err) throw err;
+          compareObjects(createdBundle, secretBundle);
+          next();
+        });
+      }
+      
+      function getSecretReturnsNotFound(next) {
+        client.getSecret(secretId.baseIdentifier, function (err, secretBundle) {
+          if (!err || !err.code || err.code !== 'SecretNotFound' || !err.statusCode || err.statusCode !== 404) throw new Error('Unexpected error object: ' + JSON.stringify(err, null, ' '));
+          next();
+        });
+      }
+      
+      series([
+        createSecret,
+        getSecretWOVersion,
+        getSecretWithVersion,
+        updateSecretWOVersion,
+        updateSecretWithVersion,
+        deleteSecret,
+        getSecretReturnsNotFound,
+        function () { done(); }
+      ]);
+      
+    });
+  });
+  
+  describe('list', function () {
+    it('should work', function (done) {
+      
+      this.timeout(100000);
+      
+      var maxSecrets = LIST_TEST_SIZE;
+      var expected = {};
+      var zeroCount = Object.keys(expected).length;
+      
+      function createManySecrets(next) {
+        
+        var secretCount = 0;
+        var errorCount = 0;
+        
+        function createASecret() {
+          client.setSecret(vaultUri, SECRET_NAME + (secretCount + 1), SECRET_VALUE, function (err, secretBundle) {
+            if (err && err.code == 'Throttled') {
+              ++errorCount;
+              return setTimeout(createASecret, errorCount * 2500);
+            }
+            if (err) throw err;
+            errorCount = 0;
+            var secretId = KeyVault.parseSecretIdentifier(secretBundle.id).baseIdentifier;
+            expected[secretId] = secretBundle.attributes;
+            ++secretCount;
+            if (secretCount < maxSecrets) {
+              return createASecret();
+            }
+            next();
+          });
+        }
+        
+        createASecret();
+      }
+      
+      function listSecrets(next) {
+        var currentResult;
+        client.getSecrets(vaultUri, { maxresults: LIST_TEST_SIZE }, function (err, result) {
+          if (err) throw err;
+          should(result.length).be.within(0, LIST_TEST_SIZE);
+          validateSecretList(result, expected);
+          currentResult = result;
+          if (currentResult.nextLink) {
+            return getNextSecrets(currentResult.nextLink);
+          }
+          next();
+          
+          function getNextSecrets(nextLink) {
+            client.getSecretsNext(nextLink, function (err, list) {
+              if (err) throw err;
+              validateSecretList(list, expected);
+              if (list.nextLink) {
+                return getNextSecrets(list.nextLink);
+              }
+              if (Object.keys(expected).length !== zeroCount) {
+                throw new Error('Not all secrets were returned: ' + JSON.stringify(Object.keys(expected), null, ' '));
+              }
+              next();
+            });
+          }
+          
+        });
+      }
+      
+      series([
+        createManySecrets,
+        listSecrets,
+        function () {
+          done();
+        }
+      ]);
+
+    });
+  });
+  
+  describe('list versions', function () {
+    it('should work', function (done) {
+      
+      this.timeout(10000);
+      
+      
+      var maxSecrets = LIST_TEST_SIZE;
+      var expected = {};
+      var zeroCount = Object.keys(expected).length;
+      
+      function createManySecretVersions(next) {
+        
+        var secretCount = 0;
+        var errorCount = 0;
+        
+        function createASecret() {
+          client.setSecret(vaultUri, SECRET_NAME, SECRET_VALUE, function (err, secretBundle) {
+            if (err && err.code == 'Throttled') {
+              ++errorCount;
+              return setTimeout(createASecret, errorCount * 2500);
+            }
+            if (err) throw err;
+            errorCount = 0;
+            expected[secretBundle.id] = secretBundle.attributes;
+            ++secretCount;
+            if (secretCount < maxSecrets) {
+              return createASecret();
+            }
+            next();
+          });
+        }
+        
+        createASecret();
+      }
+      
+      function listSecretVersions(next) {
+        var currentResult;
+        client.getSecretVersions(vaultUri, SECRET_NAME, function (err, result) {
+          if (err) throw err;
+          validateSecretList(result, expected);
+          currentResult = result;
+          if (currentResult.nextLink) {
+            return getNextSecrets(currentResult.nextLink);
+          }
+          next();
+          
+          function getNextSecrets(nextList) {
+            client.getSecretVersionsNext(nextList, function (err, list) {
+              if (err) throw err;
+              validateSecretList(list, expected);
+              if (list.nextLink) {
+                return getNextSecrets(list.nextLink);
+              }
+              if (Object.keys(expected).length !== zeroCount) {
+                throw new Error('Not all secrets were returned: ' + JSON.stringify(Object.keys(expected), null, ' '));
+              }
+              next();
+            });
+          }
+          
+        });
+      }
+      
+      series([
+        createManySecretVersions,
+        listSecretVersions,
+        function () {
+          done();
+        }
+      ]);
+
+    });
+  });
+  
+  function cleanupCreatedSecrets(callback) {
+    
+    if (!suiteUtil.isMocked) {
+      client.getSecrets(vaultUri, function (err, list) {
+        if (list && list.length !== 0) {
+          list.forEach(function (secret) {
+            var id = KeyVault.parseSecretIdentifier(secret.id);
+            client.deleteSecret(id.vault, id.name, function (err, bundle) { });
+          });
+        }
+        callback();
+      });
     }
+    else callback();
+  }
 
 });
